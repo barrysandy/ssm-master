@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoshu.dao.MeetingMapper">
+	<!-- 按照模糊分页查询列表 -->
+	<select id="getListByKeyWord" parameterType="java.util.Map" resultType="com.xiaoshu.entity.Meeting">
+		SELECT ID,IMAGE,TITLE,DESC_M,NAME,PHONE,CREATE_TIME,UPDATE_TIME,BEGIN_TIME,END_TIME,SIGN_TOTAL,STATUS,EXCEL_PATH
+		FROM  t_meeting WHERE 1=1
+		<if test="status != -1 ">
+			AND STATUS = #{status}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND TITLE LIKE concat(concat('%',#{keyword}),'%')
+		</if>
+		ORDER BY CREATE_TIME DESC
+		limit #{index},#{pageSize}
+	</select>
+	
+	<!-- 按照key统计个数 -->
+	<select id="getCountByKeyWord" resultType="java.lang.Integer">
+		SELECT COUNT(ID) FROM  t_meeting WHERE 1=1
+		<if test="status != -1 ">
+			AND STATUS = #{status}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND TITLE LIKE concat(concat('%',#{keyword}),'%')
+		</if>
+	</select>
+
+
+</mapper>
