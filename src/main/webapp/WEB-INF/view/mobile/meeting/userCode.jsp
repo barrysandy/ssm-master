@@ -18,7 +18,7 @@
 	<script src="${path }/resources/layui/layuiUtil.js"></script>
 
 	<script src="${path}/resources/js/jquery-1.8.3.min.js"></script>
-	<title>我的会议签到码</title>
+	<title>签到码</title>
 </head>
 <body>
 
@@ -76,12 +76,20 @@
                 }else if(status == "1" || status == 1){
                     layuiUtilMsg("签到成功!!!!");
                     status = 2;
+                    setTimeout(function(){
+                        var id = $("#meetingId").val();
+                        window.location.href = "${path}/meeting/myMeetingNoUser?id=" +  id ;
+                    }, 1000);
                 }
             }, 500);
 		}else if(status == "1" || status == 1){
             $("#status0").hide();
             $("#status1").hide();
             $("#status2").show();
+            setTimeout(function(){
+                var id = $("#meetingId").val();
+                window.location.href = "${path}/meeting/myMeetingNoUser?id=" +  id ;
+            }, 1000);
 		}
     });
 </script>

@@ -10,6 +10,7 @@ import com.xiaoshu.service.MeetingService;
 import com.xiaoshu.service.MeetingSignService;
 import com.xiaoshu.service.MessageRecordService;
 import com.xiaoshu.tools.*;
+import com.xiaoshu.tools.single.MapMeetingCache;
 import com.xiaoshu.tools.ssmImage.ToolsImage;
 import com.xiaoshu.util.JsonUtils;
 import com.xiaoshu.util.Pager;
@@ -165,6 +166,13 @@ public class AdminMeetingController {
                 }else{
                     meetingService.save(bean,oldImage);
                 }
+                Map map = MapMeetingCache.getInstance().getMap();
+                if(bean.getImage() != null){
+                    String url = ToolsImage.getImageUrlByServer(bean.getImage());
+                    bean.setImage(url);
+                }
+                map.put(bean.getId(),bean);
+                System.out.println(" Update it !!!" + bean);
             }
         }catch(Exception e){
             return JsonUtils.turnJson(false,"error" + e.getMessage(),e);
@@ -379,8 +387,10 @@ public class AdminMeetingController {
         System.out.println("id: " + id );
         try{
             Meeting bean =  meetingService.getById(id);
+            Integer total = meetingSignService.getCountStatusByMeetingId(id,1);
             model.addAttribute("bean", bean);
             model.addAttribute("id", id);
+            model.addAttribute("total", total);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -459,7 +469,7 @@ public class AdminMeetingController {
      * @author XGB
      * @date 2018-05-15 11:10
      */
-    @RequestMapping(value = "/interfaceGetMeetingUpdateStatus", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @RequestMapping("/interfaceGetMeetingUpdateStatus")
     @ResponseBody
     public String interfaceGetMeetingUpdateStatus(String id){
         if(id != null){
@@ -469,8 +479,8 @@ public class AdminMeetingController {
         }
         try{
             int i = meetingSignService.updateResponseStatusById(1,ToolsDate.getStringDate(ToolsDate.simpleSecond),id);
-            System.out.println("i :" + i);
-            return String.valueOf(i);
+            Integer total = meetingSignService.getCountStatusByMeetingId(id,1);
+            return i + "," + total;
         }catch(Exception e) {
             e.printStackTrace();
         }

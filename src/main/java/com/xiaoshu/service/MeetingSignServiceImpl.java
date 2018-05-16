@@ -134,4 +134,10 @@ public class MeetingSignServiceImpl implements MeetingSignService{
 	public List<MeetingSign> getListByMeetingId(Integer index,Integer pageSize,String meetingId) throws Exception{
 		return mapper.getListByMeetingId(index,pageSize,meetingId);
 	}
+
+	/** Count getCountStatusByMeetingId */
+	@Override
+	public Integer getCountStatusByMeetingId(String meetingId,Integer status) throws Exception{
+		return mapper.getCountStatusByMeetingId(meetingId,status);
+	}
 }

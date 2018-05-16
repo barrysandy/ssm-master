@@ -58,4 +58,7 @@ public  interface MeetingSignService {
 	/** select getListByMeetingId */
 	List<MeetingSign> getListByMeetingId(Integer index,Integer pageSize,String meetingId) throws Exception;
 
+	/** Count getCountStatusByMeetingId */
+	Integer getCountStatusByMeetingId(String meetingId,Integer status) throws Exception;
+
 }

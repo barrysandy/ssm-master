@@ -83,4 +83,8 @@ public interface MeetingSignMapper {
 	/** select getListByMeetingId */
 	List<MeetingSign> getListByMeetingId(@Param("index") Integer index, @Param("pageSize") Integer pageSize,
 									   @Param("meetingId") String meetingId ) throws Exception;
+
+	/** Count getCountStatusByMeetingId */
+	@Select("SELECT COUNT(ID) FROM t_meeting_sign WHERE MEETING_ID =#{meetingId } AND STATUS=#{status} ")
+	Integer getCountStatusByMeetingId(@Param("meetingId") String meetingId,@Param("status") Integer status);
 }
