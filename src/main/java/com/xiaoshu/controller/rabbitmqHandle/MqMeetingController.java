@@ -3,7 +3,6 @@ package com.xiaoshu.controller.rabbitmqHandle;
 import com.xiaoshu.controller.BaseController;
 import com.xiaoshu.entity.MeetingSign;
 import com.xiaoshu.enumeration.EnumsMQAck;
-import com.xiaoshu.service.MeetingService;
 import com.xiaoshu.service.MeetingSignService;
 import com.xiaoshu.tools.ToolsBarcodeRelease;
 import com.xiaoshu.tools.ToolsPage;
@@ -30,9 +29,11 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/interfaceMqMeeting")
 public class MqMeetingController extends BaseController {
-	private static Logger log = LoggerFactory.getLogger(MqMeetingController.class);
 
-	@Resource private MeetingService meetinmgService;
+	private final Logger log = LoggerFactory.getLogger(MqMeetingController.class);
+
+	private static int total = 0;
+
 	@Resource private MeetingSignService meetingSignService;
 
 	/**
@@ -65,9 +66,10 @@ public class MqMeetingController extends BaseController {
                                     signCode = signCode + signCode;
 									signCode = ToolsBarcodeRelease.getbarCodeAddLast(signCode);
 									// TODO 生成条形码
-                                    String saveFilePath = "upfile/signCode/" + meetingId + "/";//服务器保存文件路径
+                                    String saveFilePath = "resources/upfile/signCode/" + meetingId + "/";//服务器保存文件路径
                                     String path = request.getSession().getServletContext().getRealPath(saveFilePath);
-                                    ToolsBarcodeRelease.createBarCode(path, signCode, ImageUtil.JPEG);
+                                    ToolsBarcodeRelease.createBarCode(path, signCode, ImageUtil.JPEG,meetingSign.getSignCode());
+									log.info("\nCreate barCode Complete!!!  ");
 								}
 							}
 						}
@@ -77,8 +79,16 @@ public class MqMeetingController extends BaseController {
 			}
 		} catch (Exception e) {
 			System.out.println("异常：" + e);
+
 			e.printStackTrace();
-			return EnumsMQAck.ACK_FAIL;
+			total ++;
+			if(total >= 5){
+				System.out.println("超过5次 直接ACK_OK 将异常记录在MQ异常表 !!!  ");
+				return EnumsMQAck.ACK_OK;
+			}else {
+				return EnumsMQAck.ACK_FAIL;
+			}
+
 		}
 		return EnumsMQAck.ACK_OK;
 	}

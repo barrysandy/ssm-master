@@ -15,6 +15,8 @@ import com.xiaoshu.tools.ssmImage.ToolsImage;
 import com.xiaoshu.util.JsonUtils;
 import com.xiaoshu.util.Pager;
 import com.xiaoshu.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +33,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/meeting")
 public class AdminMeetingController {
+    private final Logger log = LoggerFactory.getLogger(AdminMeetingController.class);
 
     @Autowired private DeadLetterPublishService deadLetterPublishService;
     @Resource private MeetingService meetingService;
@@ -365,7 +368,7 @@ public class AdminMeetingController {
             DtoMessage dtoMessage = new DtoMessage(UUID.randomUUID().toString(), url, "get" ,params , null);
             String message = DtoMessage.transformationToJson(dtoMessage);
             System.out.println("=================" + message);
-            deadLetterPublishService.send(EnumsMQName.DEAD_LETTER,message);
+            deadLetterPublishService.send(EnumsMQName.DEAD_ORDER_CHECK,message);
 
         }catch(Exception e) {
             e.printStackTrace();
@@ -421,12 +424,23 @@ public class AdminMeetingController {
             else if(signCode.length() == 11){
                 meetingSign = meetingSignService.getByPone(signCode,id);
             }
+            else if(signCode.length() == 12){
+                signCode = signCode.substring(5,11);
+                log.info("------------ [LOG2] meetingSign 12 : " + signCode + " ------------");
+                meetingSign = meetingSignService.getBySignCode(signCode,id);
+            }
+            else if(signCode.length() == 13){
+                signCode = signCode.substring(0,6);
+                meetingSign = meetingSignService.getBySignCode(signCode,id);
+            }
             if(meetingSign != null){
                 String json = JSONUtils.toJSONString(meetingSign);
                 json = ToolsString.getStrRemoveBracket(json);
                 System.out.println("json: " + json);
                 return json;
-            }else return "0";
+            }else if(meetingSign == null){
+                return "0";
+            }
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -444,7 +458,6 @@ public class AdminMeetingController {
      */
     @RequestMapping("/toSignCodeView")
     public String toSignCodeView(String signCode,String id, HttpServletRequest request){
-        System.out.println("SignCode: " + signCode);
         try{
             if(signCode != null){
                 MeetingSign bean = null;
@@ -453,6 +466,15 @@ public class AdminMeetingController {
                 }
                 else if(signCode.length() == 11){
                     bean = meetingSignService.getByPone(signCode,id);
+                }
+                else if(signCode.length() == 12){
+                    signCode = signCode.substring(5,11);
+                    log.info("------------ [LOG] meetingSign 12 : " + signCode + " ------------");
+                    bean = meetingSignService.getBySignCode(signCode,id);
+                }
+                else if(signCode.length() == 13){
+                    signCode = signCode.substring(0,6);
+                    bean = meetingSignService.getBySignCode(signCode,id);
                 }
                 request.setAttribute("bean", bean);
             }

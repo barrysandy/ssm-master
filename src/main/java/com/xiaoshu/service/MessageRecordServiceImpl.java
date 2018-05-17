@@ -2,6 +2,7 @@ package com.xiaoshu.service;
 
 
 import com.xiaoshu.api.*;
+import com.xiaoshu.controller.frontend.meeting.MeetingController;
 import com.xiaoshu.dao.*;
 import com.xiaoshu.entity.*;
 import com.xiaoshu.tools.ToolsDate;
@@ -779,7 +780,6 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 					MessageTemple messageTemple = MsgTemplate.getMessageTemple( listTemple,type);
 					if(messageTemple != null){
 						int total = meetingSignMapper.getCountByKeyWord(id,-1,"");
-						System.out.println("   TOTAL : " + total);
 						int pageSize = 10;
 						int totalPage = ToolsPage.totalPage(total, pageSize);//总页数
 						if(totalPage > 0) {
@@ -799,7 +799,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 										String signPhone = meetingSign.getPhone();
 										String sign = messageTemple.getSign();
 										String meetingTitle = meeting.getTitle();
-										String meetingCode = com.xiaoshu.api.Set.SYSTEM_URL + "meeting/myCodeNoUser?id=" + id + "&code=" + meetingSign.getSignCode();
+										String meetingCode = com.xiaoshu.api.Set.SYSTEM_URL + MeetingController.MEETING_URL2 + id + "&code=" + meetingSign.getSignCode();
 										//
 										// meetingCode = URLEncoder.encode(meetingCode ,"utf-8");
 										String meetingUserName = meeting.getName();
@@ -813,7 +813,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 										String status = (String) map.get("status");
 										String msg =  (String) map.get("msg");
 										String msgId = UUID.randomUUID().toString();
-										MessageRecord messageRecord = new MessageRecord(msgId, meetingUserPhone, sign, content,meetingSign.getId(), status, new Date(), new Date(), msg ,code, 1);
+										MessageRecord messageRecord = new MessageRecord(msgId, signPhone, sign, content,meetingSign.getId(), status, new Date(), new Date(), msg ,code, 1);
 										messageRecordMapper.save(messageRecord);
 										sendTotal ++;
 										log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] send Code: " + code + " ------------");

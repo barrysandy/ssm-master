@@ -25,7 +25,7 @@
 
 <input type="hidden" id="id" value="${id }" />
 <div class="loginWraper">
-    <div align="center" style="margin-top: 10%;font-size: 24px;color: slategray;"><span style="color: black">${bean.title}</span>会议签到</div>
+    <div align="center" style="margin-top: 4.5%;font-size: 24px;color: slategray;"><span style="color: black">${bean.title}</span>会议签到</div>
     <div id="loginform" class="loginBox">
         <div class="form form-horizontal">
             <div class="row cl">

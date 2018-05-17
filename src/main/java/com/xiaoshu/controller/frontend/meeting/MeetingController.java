@@ -22,21 +22,25 @@ import java.util.Map;
 @RequestMapping("/meeting")
 public class MeetingController {
 
+    public static final String MEETING_URL1 = "meeting/interfaceMyCodeNoUser?id=";
+    public static final String MEETING_URL2 = "meeting/myCodeNoUser?id=";
+
     @Resource private MeetingService meetingService;
     @Resource private MeetingSignService meetingSignService;
 
+
     /**
-     * meeting/myCodeNoUser?id=&code=
+     * meeting/interfaceMyCodeNoUser?id=&code=
      * 用户条形码访问页面
      * @param id
      * @param code
      * @author XGB
      * @date 2018-05-14 15:42
      */
-    @RequestMapping("myCodeNoUser")
-    public String myCodeNoUser(HttpServletRequest request, String id, String code){
-        System.out.println("id:" + id + " code:" + code);
-        String url = "";
+    @RequestMapping("interfaceMyCodeNoUser")
+    public String interfaceMyCodeNoUser(HttpServletRequest request, String id, String code){
+        String url = "mobile/meeting/userCode";
+        System.out.println("interfaceMyCodeNoUser------------------ url : " + url);
         try{
             if(id != null && code != null){
                 Meeting meeting = meetingService.getById(id);
@@ -44,11 +48,30 @@ public class MeetingController {
                 if(meeting != null && meetingSign != null){
                     request.setAttribute("meeting",meeting);
                     request.setAttribute("meetingSign",meetingSign);
-                    String signCode = meetingSign.getSignCode() + meetingSign.getSignCode();
-                    signCode = ToolsBarcodeRelease.getbarCodeAddLast(signCode);
-                    String path = Set.SYSTEM_URL + "/upfile/signCode/" + id + "/" + File.separator + signCode + ".jpeg";//服务器保存文件路径
+                    String path = Set.SYSTEM_URL + "/resources/upfile/signCode/" + id + "/" + File.separator + code + ".jpeg";//服务器保存文件路径
                     request.setAttribute("code", path);
-                    url = "mobile/meeting/userCode";
+                }
+            }
+            System.out.println("url:" + url );
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    @RequestMapping("myCodeNoUser")
+    public String myCodeNoUser(HttpServletRequest request, String id, String code){
+        String url = "mobile/meeting/userCode";
+        System.out.println("myCodeNoUser------------------ url : " + url);
+        try{
+            if(id != null && code != null){
+                Meeting meeting = meetingService.getById(id);
+                MeetingSign meetingSign = meetingSignService.getBySignCode(code,id);
+                if(meeting != null && meetingSign != null){
+                    request.setAttribute("meeting",meeting);
+                    request.setAttribute("meetingSign",meetingSign);
+                    String path = Set.SYSTEM_URL + "/resources/upfile/signCode/" + id + "/" + File.separator + code + ".jpeg";//服务器保存文件路径
+                    request.setAttribute("code", path);
                 }
             }
             System.out.println("url:" + url );
@@ -68,7 +91,7 @@ public class MeetingController {
      */
     @RequestMapping(value = "/myCodeStatusNoUser", method = RequestMethod.GET)
     @ResponseBody
-    public String myCodeStatusNoUser(HttpServletRequest request, String id, String code){
+    public String myCodeStatusNoUser(String id, String code){
         try{
             if(id != null && code != null){
                 Integer status = meetingSignService.getStatusBySignCode(code,id);
@@ -103,7 +126,7 @@ public class MeetingController {
                 if(map.get(id) != null){
                     meeting = (Meeting) map.get(id);
                     request.setAttribute("meeting",meeting);
-                    System.out.println(" Get it in Map!!!" + meeting);
+                    System.out.println(" Get it in Map!!!");
                 }else{
                     meeting = meetingService.getById(id);
                     if(meeting != null){

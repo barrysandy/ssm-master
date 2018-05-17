@@ -3,10 +3,11 @@ package com.xiaoshu.tools;
 import org.jbarcode.JBarcode;
 import org.jbarcode.encode.EAN13Encoder;
 import org.jbarcode.encode.InvalidAtributeException;
-import org.jbarcode.paint.BarcodePainter;
 import org.jbarcode.paint.EAN13TextPainter;
 import org.jbarcode.paint.WidthCodedPainter;
 import org.jbarcode.util.ImageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -29,9 +30,10 @@ import java.util.Date;
  *
  * @=============================================
  */
- 
+
 public class ToolsBarcodeRelease {
 
+    public static final Logger log = LoggerFactory.getLogger(ToolsBarcodeRelease.class);
     /**
      * 生成商品条形码
      *
@@ -40,30 +42,23 @@ public class ToolsBarcodeRelease {
      * @param imgFormat 图片格式
      * @return 图片存放路径+图片名称+图片文件类型
      */
-    public static String createBarCode(String savePath, String jbarCode, String imgFormat) {
+    public static String createBarCode(String savePath, String jbarCode, String imgFormat, String jbarPathCode) {
 
         // 校验全部省略……
-        // if(StringUtils.isNotEmpty(savePath)){
-        //
-
-        // return null;
-        // }
-        // if(StringUtils.isNotEmpty(jbarCode)){
-        // return null;
-        // }
-        // if(StringUtils.isNotEmpty
-
-        // (imgFormat)){
-        // return null;
-        // }
-        // if( jbarCode.length()!=13){
-        // return null;
-        // }
-
+//         if(StringUtils.isNotEmpty(savePath)){
+//            return null;
+//         }
+//         if(StringUtils.isNotEmpty(jbarCode)){
+//            return null;
+//         }
+//         if(StringUtils.isNotEmpty(imgFormat)){
+//            return null;
+//         }
+//         if( jbarCode.length() != 13){
+//            return null;
+//         }
         try {
-
             BufferedImage bi = null;
-
             int len = jbarCode.length();
 
             // 实例化JBarcode
@@ -82,7 +77,7 @@ public class ToolsBarcodeRelease {
             if (!code.equals(checkCode)) {
                 return "EN-13 条形码最后一位校验码 不对，应该是： " + checkCode;
             }
- 
+
             /*
              * 最重要的是这里的设置，如果明白了这里的设置就没有问题 如果是默认设置，
              * 那么设置就是生成一般的条形码 如果不是默认
@@ -110,7 +105,7 @@ public class ToolsBarcodeRelease {
 
             FileOutputStream fileOutputStream = null;
 //            String imgPath = savePath + imgName + "." + imgFormat;
-            String imgPath = savePath + "/"  + jbarCode + "." + imgFormat;
+            String imgPath = savePath + File.separator  + jbarPathCode + "." + imgFormat;
             try {
                 try {
                     savePath = URLDecoder.decode(savePath, "UTF-8");
@@ -125,6 +120,7 @@ public class ToolsBarcodeRelease {
                 }
 
                 fileOutputStream = new FileOutputStream(imgPath);
+                log.info("\nsave it imgPath :" + imgPath);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -170,38 +166,44 @@ public class ToolsBarcodeRelease {
         if(str != null){if("".equals(str)){return null;}}
         if(str != null){if("".equals(str)){if(str.length() != 12){return null;}}}
         /** 字符切割 */
-        String[] strArray = str.split("");
-        String a1 = strArray[2];
-        String a2 = strArray[4];
-        String a3 = strArray[6];
-        String a4 = strArray[8];
-        String a5 = strArray[10];
-        String a6 = strArray[12];
-
-        String b1 = strArray[1];
-        String b2 = strArray[3];
-        String b3 = strArray[5];
-        String b4 = strArray[7];
-        String b5 = strArray[9];
-        String b6 = strArray[11];
-
-        //步骤1 偶数位之和为a
-        String a = String.valueOf(Integer.parseInt(a1) + Integer.parseInt(a2) +Integer.parseInt(a3) +Integer.parseInt(a4)
-                +Integer.parseInt(a5) +Integer.parseInt(a6));
-        //步骤2 a*3
-        a = String.valueOf(Integer.parseInt(a) * 3);
-        //步骤3 基数位之和为b
-        String b = String.valueOf(Integer.parseInt(b1) + Integer.parseInt(b2) +Integer.parseInt(b3) +Integer.parseInt(b4)
-                +Integer.parseInt(b5) +Integer.parseInt(b6));
-        //步骤4 c = a + b
-        String c = String.valueOf(Integer.parseInt(a) + Integer.parseInt(b));
-        //步骤5 取c的个数位为d，10-d 如果等于10 则为0 并将结果赋值给e
-        String d = c.split("")[c.length()];
-        String e = String.valueOf(10 - Integer.parseInt(d));
-        if(e.length() >= 2){
-            e = "0";
+        int a = 0;
+        int b = 0;
+        char[] chars = str.toCharArray();
+        for(int i = 0; i < chars.length ; i++){
+            if(i%2 == 1){ //基数
+                String current = chars[i] + "";
+                a = Integer.parseInt(current) + a;
+            }else if(i%2 == 0){ //偶数
+                String current = chars[i] + "";
+                b = Integer.parseInt(current) + b;
+            }
         }
-        return str + e;
+
+        //EN-13 位数位校验步骤
+        //步骤1 偶数位之和为a
+        //已完成在循环
+        //步骤2 a*3
+        a = a * 3 ;
+        //步骤3 基数位之和为b
+        //已完成在循环
+        //步骤4 c = a + b
+        int c =  a + b ;
+        String cStr = String.valueOf(c);
+        System.out.println(" C code is  :" + cStr);
+        //步骤5 取c的个数位为d，10-d 如果等于10 则为0 并将结果赋值给e
+        char[] cStrArray = cStr.toCharArray();
+        if(cStrArray != null){
+            if(cStrArray.length > 0){
+                String d = cStrArray[cStrArray.length - 1] + "";
+                System.out.println("尾数 last is :" + cStrArray[cStrArray.length - 1] );
+                String e = String.valueOf(10 - Integer.parseInt(d));
+                if(e.length() >= 2){
+                    e = "0";
+                }
+                str = str + e;
+            }
+        }
+        return str;
     }
 
     /**
@@ -209,8 +211,8 @@ public class ToolsBarcodeRelease {
      * @throws InvalidAtributeException
      */
     public static void main(String[] args) throws InvalidAtributeException {
-        String jbarCode = ToolsBarcodeRelease.getbarCodeAddLast("401972401972");
-        String path = ToolsBarcodeRelease.createBarCode("D://test//", jbarCode, ImageUtil.JPEG);
+        String jbarCode = ToolsBarcodeRelease.getbarCodeAddLast("829134829134");
+        String path = ToolsBarcodeRelease.createBarCode("D://test//", jbarCode, ImageUtil.JPEG,"829134");
         System.out.println(path);
     }
 }
