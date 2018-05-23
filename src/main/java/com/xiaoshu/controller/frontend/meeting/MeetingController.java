@@ -21,10 +21,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/meeting")
@@ -180,33 +177,82 @@ public class MeetingController {
                     if(!"".equals(weather)){
                         Long date = (Long) map.get("weatherDate");
                         Long date2 = new Date().getTime();
-                        if(((date2 - date) / 1000) >= 3600){ //数据保存一小时/超时刷新天气数据
-                            System.out.println(" Get Data in Map,But Data expired,must Refresh!!!");
+                        if(((date2 - date) / 1000) >= 360){ //数据保存一小时/超时刷新天气数据
+                            System.out.println(" Get Data in Map,But Data expired,must Refresh!!!" );
                             weatherVo = ToolsWeather.getListInstance(addresee,3);
-                            String json = JSONUtils.toJSONString(weatherVo);
-                            System.out.println(" Get Data from Interface !!!");
-                            map.put("weather",json);
-                            map.put("weatherDate",new Date().getTime());
+                            if(weatherVo != null){
+                                String json = JSONUtils.toJSONString(weatherVo);
+                                System.out.println(" Get Data from Interface !!!json = " + json);
+                                map.put("weather",json);
+                                map.put("weatherDate",new Date().getTime());
+                            }
+
                         }else {
                             weatherVo = JSONUtils.toList(weather,WeatherVo.class);
-                            System.out.println(" Get Data in Map!!!");
+                            System.out.println(" Get Data in Map!!!weatherVo = " + weatherVo);
                         }
                     }
                 }
             }else{
                 weatherVo = ToolsWeather.getListInstance(addresee,3);
                 String json = JSONUtils.toJSONString(weatherVo);
-                System.out.println(" Get Data from Interface !!!");
+                System.out.println(" Get Data from Interface !!!" + weatherVo);
                 map.put("weather",json);
                 map.put("weatherDate",new Date().getTime());
             }
 
+            int isInit = 1;
+            if(weatherVo != null ){
+                if(weatherVo.size() > 0 ){
+                    Iterator<WeatherVo> iterator = weatherVo.iterator();
+                    while(iterator.hasNext()){
+                        WeatherVo bean = iterator.next();
+                        if(bean != null){
+//                            System.out.println(" bean !!!" + bean);
+                            String data = bean.getDate();
+                            if(data != null){
+//                                System.out.println("data length: " + data.length() );
+                                if(data.length() == 10 ){
+                                    //2018-05-23
+                                    if("0".equals(data.charAt(5))){
+                                        data = "" + data.charAt(6) + "月" +data.charAt(8) +data.charAt(9) + "日";
+                                    }else{
+                                        data = "" + data.charAt(5) + data.charAt(6) + "月" +data.charAt(8) +data.charAt(9) + "日";
+                                    }
+                                    bean.setDate(data);
+//                                    System.out.println("data " + data);
+                                }
+
+
+                            }
+                        }
+                    }
+                }else{
+                    isInit = 0;
+                    weatherVo = getList(addresee);
+                    System.out.println(" Get Data in InitFuncation!!!" );
+                }
+            }
+            else{
+                isInit = 0;
+                weatherVo = getList(addresee);
+                System.out.println(" Get Data in InitFuncation!!!" );
+            }
+            request.setAttribute("isInit",isInit);
             request.setAttribute("weatherVo",weatherVo);
         }
         return "mobile/meeting/userMeeting";
     }
 
 
+    private static List<WeatherVo> getList(String cityName){
+        List<WeatherVo> list = new ArrayList<WeatherVo>();
+        list.add(new WeatherVo(cityName, "", "", "5月25日", "星期五", "多云", "", "29", "18", "1", "", "", "", "", "", "" ));
+        list.add(new WeatherVo(cityName, "", "", "5月26日", "星期日", "小雨", "", "26", "17", "7", "", "", "", "", "", "" ));
+        list.add(new WeatherVo(cityName, "", "", "5月27日", "星期天", "多云", "", "28", "16", "1", "", "", "", "", "", "" ));
+
+        return  list;
+    }
 
     /**
      * meeting/myMeetingNoUserMap?id=

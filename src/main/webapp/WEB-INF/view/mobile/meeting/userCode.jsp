@@ -26,7 +26,6 @@
 	<h4 style="margin-top: 2rem;color: white;font-size: 1.4rem;">${meeting.title }</h4>
 	<div align="center">
 		<h2 style="color: white;font-size: 1.4rem;">签到码：${meetingSign.signCode }</h2>
-		<h2 style="color: white;font-size: 1rem;">也可以使用你的电话号码进行签到</h2>
 		<img style="margin-top: 2rem;" src="${code}" width="80%"/>
 		<h2 id="status0" style="color: grey;font-size: 1.4rem;">等待扫描</h2>
 		<div  id="status1" style="display: none;">

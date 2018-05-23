@@ -163,11 +163,11 @@
 		</div>
 		<div style="margin-top: 10px;margin-bottom: 10px;">
 			<c:forEach var="weatherVo" items="${weatherVo}" varStatus="status">
-				<div style="width: 25%;display: inline-block;justify-content: space-around;">
+				<div style="width: 30%;display: inline-block;justify-content: space-around;">
 					<div style="width: 100%">${weatherVo.week }
-						<c:if test="${ status.index == 0}"><span style="color: green;">今天</span></c:if>
-						<c:if test="${ status.index == 1}"><span style="color: darkmagenta;">明天</span></c:if>
-						<c:if test="${ status.index == 2}"><span style="color: orchid;">后天</span></c:if>
+						<c:if test="${ status.index == 0}"><span style="color: green;">${weatherVo.date }</span></c:if>
+						<c:if test="${ status.index == 1}"><span style="color: darkmagenta;">${weatherVo.date }</span></c:if>
+						<c:if test="${ status.index == 2}"><span style="color: orchid;">${weatherVo.date }</span></c:if>
 					</div>
 					<div style="width: 100%;"><img class="icon" style="vertical-align:middle;margin-top: 0px;" src="${path}/resources/img/icon/weathercnAlibabaWeather/${weatherVo.img }.png"></div>
 					<div style="width: 100%;">${weatherVo.weather }</div>
