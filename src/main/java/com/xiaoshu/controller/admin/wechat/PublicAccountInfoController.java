@@ -12,6 +12,8 @@ import com.xiaoshu.util.StochasticUtil;
 import com.xiaoshu.wechat.pojo.AccessToken;
 import com.xiaoshu.wechat.tools.WeixinUtil;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +33,8 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "/publicAccountInfo")
 public class PublicAccountInfoController extends BaseController {
+
+	private static Logger logger = LoggerFactory.getLogger(PublicAccountInfoController.class);
 
 	@Resource private PublicAccountInfoService publicAccountInfoService;
 	@Resource private MenuMapper menuMapper;
@@ -260,7 +264,9 @@ public class PublicAccountInfoController extends BaseController {
 	public String interfaceGetAll(int usable) {
 		try {
 			List<PublicAccountInfo> bean = publicAccountInfoService.selectListAll(usable);
-			System.out.println("======================ToRefreshMapJobPublicAccount()  bean ：" + bean);
+			logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+			logger.info("------------ [log.info System Message] PublicAccountInfoController.interfaceGetAll()  bean ：" + bean + " param usable=" + usable);
+			logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 			if(bean!=null){
 				//将启用的公众号参数加入Map中
 				MapPublicNumber mapPublicNumber = MapPublicNumber.getInstance();

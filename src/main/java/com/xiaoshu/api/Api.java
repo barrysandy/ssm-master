@@ -113,8 +113,7 @@ public class Api {
      * @author XGB
      * @date 2018-01-18 11:05
      */
-    public static String GET_KEYWORRDS_BYMID_AND_KEY = Set.SYSTEM_URL + "keyWords/getKeyinterfaces";
-
+    public static String GET_KEYWORRDS_BYMID_AND_KEY = Set.SYSTEM_URL + "apiInterface/interfaceGetKey";
 
 
     /**

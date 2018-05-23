@@ -10,16 +10,19 @@ import com.xiaoshu.service.KeyWordsService;
 import com.xiaoshu.service.WechatMaterialService;
 import com.xiaoshu.tools.JSONUtils;
 import com.xiaoshu.tools.ToolsASCIIChang;
+import com.xiaoshu.tools.ToolsString;
 import com.xiaoshu.util.JsonUtils;
 import com.xiaoshu.util.Pager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 关键词回复表
@@ -167,22 +170,25 @@ public class KeyWordsController extends BaseController {
 	 * @author XGB
 	 * @date 2018-01-16 16:09
 	 */
-	@RequestMapping(value = "/getKeyinterfaces",produces="text/html; charset=UTF-8")
+	@RequestMapping(value = "/getKeyinterfaces", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String getKey(String menuId,String keyes){
+	public String getKeyinterfaces(String menuId, String keyes, HttpServletResponse response){
+		String json = null;
 		try{
 		    if(keyes != null && menuId != null && !"".equals(keyes) && !"".equals(menuId)){
 				keyes = ToolsASCIIChang.asciiToString(keyes);
                 KeyWords keyWords = keyWordsService.selectByKey(menuId,keyes);
-                return JSONUtils.toJSONString(keyWords);
-            }else{
-                return null;
+				if(keyWords != null){
+					keyWords.setCreateTime(null);
+					keyWords.setUpdateTime(null);
+					json = JSONUtils.toJSONString(keyWords);
+					json = ToolsString.getStrRemoveBracket(json);
+				}
             }
-
 		}catch(Exception e){
 			e.printStackTrace();
-			return null;
 		}
+		return json;
 	}
 
 }

@@ -193,6 +193,7 @@
                                     <tr>
                                         <th align="center" style="width:30px"><input id="all" type="checkbox"/></th>
                                         <th align="center" style="width:30px">序号</th>
+                                        <th style="width:80px" align="center">短信接收者</th>
                                         <th style="width:80px" align="center">电话号码</th>
                                         <th style="width:80px" align="center">签名</th>
                                         <th style="width:25%" align="center">短信内容</th>
@@ -207,6 +208,7 @@
                                         <tr>
                                             <td align="center" valign="middle"><input name="checkbox" type="checkbox" value="${bean.id }"/></td>
                                             <td align="center">${status.index+1}</td>
+                                            <td align="center">${bean.targetName}</td>
                                             <td align="center">${bean.mobile}</td>
                                             <td align="center">${bean.sign}</td>
                                             <td align="center">${bean.content}</td>

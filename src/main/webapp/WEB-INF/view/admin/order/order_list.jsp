@@ -64,6 +64,17 @@
             });
         }
 
+        function viewOrderCode (id) {
+            layer.open({
+                type: 2,
+                title: '订单核销码详情',
+                skin: 'layui-layer-rim',
+                area: ['95%', '95%'],
+                content: '${path}/order/listOrderCode?id='+id
+            });
+        }
+
+
         function viewWaterWall (orderNo) {
             layer.open({
                 type: 2,
@@ -397,9 +408,13 @@
                                                         <i class="iconfont" style="color: grey;">&#xe62f;</i>
                                                     </button>
                                                 </c:if>
-                                                <button class="u-btn sm texture f-m-l-xs" title="查看" type="button"
+                                                <button class="u-btn sm texture f-m-l-xs" title="查看订单详情" type="button"
                                                         onClick="view('${bean.id}')">
                                                     <i class="iconfont">&#xe63d;</i>
+                                                </button>
+                                                <button class="u-btn sm texture f-m-l-xs" title="查看核销码" type="button"
+                                                        onClick="viewOrderCode('${bean.id}')">
+                                                    <i class="iconfont" style="color: deeppink;">&#xe629;;</i>
                                                 </button>
                                                 <button class="u-btn sm texture f-m-l-xs" title="删除" type="button"
                                                         onClick="confirmDelete('${bean.id}','${bean.status}')">

@@ -1,5 +1,6 @@
 package com.xiaoshu.controller.admin.meeting;
 
+import com.xiaoshu.api.Set;
 import com.xiaoshu.entity.Meeting;
 import com.xiaoshu.entity.MeetingSign;
 import com.xiaoshu.service.MeetingService;
@@ -59,6 +60,8 @@ public class AdminMeetingSignController {
                     }
                 }
             }
+            String pathUrl = Set.SYSTEM_URL + "/resources/upfile/signCode/";
+            model.addAttribute("pathUrl", pathUrl);
             model.addAttribute("exit", exit);
             model.addAttribute("id", id);
             model.addAttribute("status", status);
@@ -105,7 +108,7 @@ public class AdminMeetingSignController {
     @RequestMapping("/toEdit")
     public String toEdit( Model model,String id,String meetingId, String menuId){
         try{
-            MeetingSign bean =  new MeetingSign("-1","", "", "", "", "", "", "", 0, "", "", "", 0, "");
+            MeetingSign bean =  new MeetingSign("-1","", "", "", "", "", "", "", 0, "", "", "", 0, "","男");
             if(StringUtils.isNotBlank(id) && !"-1".equals(id) && !"".equals(id)){
                 bean = meetingSignService.getById(id);
             }

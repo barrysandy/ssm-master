@@ -31,6 +31,9 @@ public  interface MeetingSignService {
 	/** select BySignCode */
 	MeetingSign getBySignCode( String signCode,String id) throws Exception;
 
+	/** select ByName */
+	List<MeetingSign> getSignCodeByName(String name,String id) throws Exception;
+
 	/** select ByPone */
 	MeetingSign getByPone( String phone,String id) throws Exception;
 

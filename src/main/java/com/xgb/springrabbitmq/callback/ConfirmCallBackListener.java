@@ -9,7 +9,7 @@ public class ConfirmCallBackListener implements ConfirmCallback{
 
 	@Override
 	public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-		System.out.println("confirm--:correlationData:"+correlationData+",ack:"+ack+",cause:"+cause);
+		System.out.println("confirm -- :correlationData:" + correlationData + ",ack:" + ack + ",cause:" + cause);
 	}
 
 }

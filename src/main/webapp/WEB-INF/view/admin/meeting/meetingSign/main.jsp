@@ -37,39 +37,32 @@
         </div>
     </div>
 
-    <div align="center" style="opacity:0.5;margin-left: 32.5%;height: 25%;margin-bottom: 10%;width: 35%;background-color: #8fb9d3;position: fixed;bottom: 0;">
+    <div align="center" style="opacity:0.8;margin-left: 32.5%;height: 25%;margin-bottom: 10%;width: 35%;background-color: #8fb9d3;position: fixed;bottom: 0;">
         <div align="left" style="margin-top: 3.5%;margin-left: 20%;">
             <table>
                 <tr>
-                    <td style="font-size: 16px;">姓名：<span style="color: black" id="name">-- --</span></td>
-                    <td style="font-size: 16px;">职位：<span style="color: black" id="position">-- --</span></td>
+                    <td style="font-size: 18px;">姓名：<span style="color: black" id="name">-- --</span></td>
+                    <td style="font-size: 18px;">职位：<span style="color: black" id="position">-- --</span></td>
                 </tr>
 
                 <tr>
-                    <td style="font-size: 16px;">机构：<span style="color: black" id="company">-- --</span></td>
-                    <td style="font-size: 16px;">电话：<span style="color: black" id="phone">-- --</span></td>
+                    <td style="font-size: 18px;">机构：<span style="color: black" id="company">-- --</span></td>
+                    <td style="font-size: 18px;">电话：<span style="color: black" id="phone">-- --</span></td>
                 </tr>
                 <tr>
-                    <td style="font-size: 16px;">类型：<span style="color: black" id="personType">-- --</span></td>
-                    <td style="font-size: 16px;">晚宴：<span style="color: black" id="joinDinner">-- --</span></td>
+                    <td style="font-size: 18px;">类型：<span style="color: black" id="personType">-- --</span></td>
+                    <td style="font-size: 18px;">晚宴：<span style="color: black" id="joinDinner">-- --</span></td>
                 </tr>
                 <tr>
-                    <td style="font-size: 16px;">签到码：<span style="color: black" id="signCode2">-- --</span></td>
+                    <td style="font-size: 18px;">签到码：<span style="color: black" id="signCode2">-- --</span></td>
                 </tr>
                 <tr>
-                    <td style="font-size: 16px;">签到人数：<span style="color: black" id="total"> ${total} </span></td>
+                    <td style="font-size: 18px;">签到人数：<span style="color: black" id="total"> ${total} </span></td>
                 </tr>
             </table>
-            <%--姓名：<span style="color: black" id="name"> </span><br>--%>
-            <%--职位：<span style="color: black" id="position"> </span><br>--%>
-            <%--机构：<span style="color: black" id="company"> </span><br>--%>
-            <%--电话：<span style="color: black" id="phone"> </span><br>--%>
-            <%--类型：<span style="color: black" id="personType"> </span><br>--%>
-            <%--晚宴：<span style="color: black" id="joinDinner"> </span><br>--%>
             <img id="img" style="display: none;margin-top: 0%;margin-left: 0%;" src="${path}/resources/img/icon/yes.png" width=6%"/>
         </div>
     </div>
-
 </div>
 <div class="footer">Copyright 智胜西行 by xiaowuSCCC.admin.v1.0.0</div>
 <script type="text/javascript" src="${path}/resources/meetingSign/lib/jquery/1.9.1/jquery.min.js"></script>
@@ -91,6 +84,7 @@
         init();
     });
 
+    /** 重置SignCode */
     function init() {
         document.getElementById('signCode').focus();
         $("#signCode").val("");
@@ -100,77 +94,117 @@
         LayuiUtil.msg(data);
     }
 
+    function isNumber(val){
+
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/; //负浮点数
+        if(regPos.test(val) || regNeg.test(val)){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
     $('input').keydown(function(e){
         if(e.keyCode==13){
             var signCode = $("#signCode").val();
             init();
             var id = $("#id").val();
-            //alert(signCode);
-            $.get('${path}/meeting/interfaceGetMeetingUser',{'signCode':signCode,'id':id},function(data){
-                if(data == "0"){
-                    layuiUtilMsg("没有搜索到！")
-                    document.getElementById('signCode').focus();
-                    $("#signCode").val("");
-                }else{
-                    //layuiUtilMsg(data.name + data.company);
-                    var signCode = data.signCode ;
-                    if(signCode.length > 0){
-                        //view (signCode);
-                        $("#name").text(data.name);
-                        $("#position").text(data.position);
-                        $("#company").text(data.company);
-                        $("#phone").text(data.phone);
-                        $("#personType").text(data.personType);
-                        $("#signCode2").text(data.signCode);
-                        if(data.joinDinner == 0){
-                            $("#joinDinner").text("不参加");
-                        }else if(data.joinDinner == 1){
-                            $("#joinDinner").text("参加");
-                        }
-                        var id = data.id;
-                        //延迟执行
-                        setTimeout(function(){
-                            //location.reload();
-                            var url = "${path}/meeting/interfaceGetMeetingUpdateStatus";
-                            $.get(url,{'id':id},function(data){
-                                if(data != ""){
-                                    var array = data.split(",");
-                                    if(array.length == 0){
-                                        layuiUtilMsg("签到异常!!!" + data);
-                                    }else {
-                                        var info = array[0];
-                                        var total = array[1];
-
-                                        if(info == 1 || info == "1"){
-                                            $("#total").text(" " + total + " ");
-                                            $("#img").show();
-                                            layuiUtilMsg("签到成功。");
-                                            setTimeout(function(){
-                                                $("#img").hide();
-                                            }, 500);
-                                        }else{
-                                            layuiUtilMsg("签到失败!!!");
-                                            setTimeout(function(){
-                                                $("#img").hide();
-                                            }, 500);
-                                        }
-                                    }
-                                }
-
-
-                            });
-                        }, 1200);
-
-                    }else {
-                        layuiUtilMsg("无效的签名码！");
+            var booleanCode = isNumber(signCode);
+            if(booleanCode){
+                $.get('${path}/meeting/interfaceGetMeetingUser',{'signCode':signCode,'id':id},function(data){
+                    if(data == "0"){
+                        layuiUtilMsg("没有搜索到！");
                         document.getElementById('signCode').focus();
                         $("#signCode").val("");
+                    }else{
+                        var signCode = data.signCode ;
+                        if(signCode.length > 0){
+                            //view (signCode);
+                            $("#name").text(data.name);
+                            $("#position").text(data.position);
+                            $("#company").text(data.company);
+                            $("#phone").text(data.phone);
+                            $("#personType").text(data.personType);
+                            $("#signCode2").text(data.signCode);
+                            if(data.joinDinner == 0){
+                                $("#joinDinner").text("不参加");
+                            }else if(data.joinDinner == 1){
+                                $("#joinDinner").text("参加");
+                            }
+                            var id = data.id;
+                            //延迟执行
+                            setTimeout(function(){
+                                //location.reload();
+                                var url = "${path}/meeting/interfaceGetMeetingUpdateStatus";
+                                $.get(url,{'id':id},function(data){
+                                    if(data != ""){
+                                        var array = data.split(",");
+                                        if(array.length == 0){
+                                            layuiUtilMsg("签到异常!!!" + data);
+                                        }else {
+                                            var info = array[0];
+                                            var total = array[1];
+
+                                            if(info == 1 || info == "1"){
+                                                $("#total").text(" " + total + " ");
+                                                $("#img").show();
+                                                layuiUtilMsg("签到成功。");
+                                                setTimeout(function(){
+                                                    $("#img").hide();
+                                                }, 500);
+                                            }else{
+                                                layuiUtilMsg("签到失败!!!");
+                                                setTimeout(function(){
+                                                    $("#img").hide();
+                                                }, 500);
+                                            }
+                                        }
+                                    }
+
+
+                                });
+                            }, 1200);
+
+                        }else {
+                            layuiUtilMsg("无效的签名码！");
+                            initInput();
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                //非数字作为名字查询
+//                alert("名字查询！！");
+                var url = "${path}/meeting/interfaceGetMeetingUserByName";
+                $.get(url,{'signCode':signCode,'id':id},function(data){
+//                    alert(data);
+                    if(data == "0" || data == ""){
+                        layuiUtilMsg("没有搜索到！");
+                        initInput();
+                    }else{
+                        alertNewWin(signCode,id);
+                    }
+                });
+            }
+
         }
     })
 
+    function alertNewWin(signCode,id){
+        layer.open({
+            type: 2,
+            title: '名字搜索结果',
+            skin: 'layui-layer-rim',
+            area: ['55%', '55%'],
+            content: '${path}/meeting/interfaceGetMeetingUserByNameToPage?signCode=' + signCode + '&id=' + id
+        });
+    }
+
+    function initInput() {
+        document.getElementById('signCode').focus();
+        $("#signCode").val("");
+    }
 
     function view (signCode) {
         var id = $("#id").val();

@@ -2,10 +2,14 @@ package com.xiaoshu.controller.frontend.meeting;
 
 import com.xiaoshu.api.Set;
 import com.xiaoshu.entity.Meeting;
+import com.xiaoshu.entity.MeetingCoordinate;
 import com.xiaoshu.entity.MeetingSign;
+import com.xiaoshu.service.MeetingCoordinateService;
 import com.xiaoshu.service.MeetingService;
 import com.xiaoshu.service.MeetingSignService;
 import com.xiaoshu.tools.*;
+import com.xiaoshu.tools.AlibbWeather.ToolsWeather;
+import com.xiaoshu.tools.AlibbWeather.WeatherVo;
 import com.xiaoshu.tools.single.MapMeetingCache;
 import com.xiaoshu.tools.ssmImage.ToolsImage;
 import org.springframework.stereotype.Controller;
@@ -15,54 +19,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/meeting")
 public class MeetingController {
 
-    public static final String MEETING_URL1 = "meeting/interfaceMyCodeNoUser?id=";
     public static final String MEETING_URL2 = "meeting/myCodeNoUser?id=";
 
     @Resource private MeetingService meetingService;
     @Resource private MeetingSignService meetingSignService;
-
-
-    /**
-     * meeting/interfaceMyCodeNoUser?id=&code=
-     * 用户条形码访问页面
-     * @param id
-     * @param code
-     * @author XGB
-     * @date 2018-05-14 15:42
-     */
-    @RequestMapping("interfaceMyCodeNoUser")
-    public String interfaceMyCodeNoUser(HttpServletRequest request, String id, String code){
-        String url = "mobile/meeting/userCode";
-        System.out.println("interfaceMyCodeNoUser------------------ url : " + url);
-        try{
-            if(id != null && code != null){
-                Meeting meeting = meetingService.getById(id);
-                MeetingSign meetingSign = meetingSignService.getBySignCode(code,id);
-                if(meeting != null && meetingSign != null){
-                    request.setAttribute("meeting",meeting);
-                    request.setAttribute("meetingSign",meetingSign);
-                    String path = Set.SYSTEM_URL + "/resources/upfile/signCode/" + id + "/" + File.separator + code + ".jpeg";//服务器保存文件路径
-                    request.setAttribute("code", path);
-                }
-            }
-            System.out.println("url:" + url );
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return url;
-    }
+    @Resource private MeetingCoordinateService meetingCoordinateService;
 
     @RequestMapping("myCodeNoUser")
     public String myCodeNoUser(HttpServletRequest request, String id, String code){
         String url = "mobile/meeting/userCode";
-        System.out.println("myCodeNoUser------------------ url : " + url);
         try{
             if(id != null && code != null){
                 Meeting meeting = meetingService.getById(id);
@@ -96,29 +72,151 @@ public class MeetingController {
             if(id != null && code != null){
                 Integer status = meetingSignService.getStatusBySignCode(code,id);
                 if(status != null){
-                    System.out.println("myCodeStatusNoUser status:" + status);
                     return String.valueOf(status);
                 }
             }
         }catch (Exception e){
-            System.out.println("myCodeStatusNoUser status: e" + e);
             e.printStackTrace();
             return "0";
         }
-        System.out.println("myCodeStatusNoUser status:0");
         return "0";
     }
 
 
     /**
      * meeting/myMeetingNoUser?id=
-     * 用户条形码访问页面
+     * 会议页面
      * @param id
      * @author XGB
      * @date 2018-05-15 9:22
      */
     @RequestMapping("myMeetingNoUser")
     public String myMeetingNoUser(HttpServletRequest request, String id){
+        Meeting meeting ;
+        if(id != null){
+            Map map = MapMeetingCache.getInstance().getMap();
+            try{
+                if(map.get(id) != null){
+                    meeting = (Meeting) map.get(id);
+                    request.setAttribute("meeting",meeting);
+                    System.out.println(" Get it in Map!!!");
+                }else{
+                    meeting = meetingService.getById(id);
+                    if(meeting != null){
+                        if(meeting.getImage() != null){
+                            String url = ToolsImage.getImageUrlByServer(meeting.getImage());
+                            meeting.setImage(url);
+                        }
+                        map.put(id,meeting);
+                        request.setAttribute("meeting",meeting);
+                    }
+                }
+
+                List<MeetingCoordinate> listMap = meetingCoordinateService.getListByMeetingId(id);
+                StringBuffer stringBuffer = new StringBuffer();
+                stringBuffer.append("[");
+                if(listMap != null){
+                    if(listMap.size() > 0){
+                        for(int i = 0;i < listMap.size();i ++){
+                            if(i + 1 < listMap.size()){
+                                stringBuffer.append("[");
+                                stringBuffer.append(listMap.get(i).getX());
+                                stringBuffer.append(",");
+                                stringBuffer.append(listMap.get(i).getY());
+                                stringBuffer.append("]");
+                                if(listMap.size() > 1){
+                                    stringBuffer.append(",");
+                                }
+                            }
+                            if(i + 1 == listMap.size()){
+                                stringBuffer.append("[");
+                                stringBuffer.append(listMap.get(i).getX());
+                                stringBuffer.append(",");
+                                stringBuffer.append(listMap.get(i).getY());
+                                stringBuffer.append("]");
+                            }
+
+                        }
+                    }
+                }
+                stringBuffer.append("]");
+                request.setAttribute("listMap",listMap);
+                request.setAttribute("positions",stringBuffer.toString());
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+//            WeatherVo weatherVo = new WeatherVo();
+//            if(map.get("weather") != null){
+//                String weather = (String) map.get("weather");
+//                if(weather != null){
+//                    if(!"".equals(weather)){
+//                        Long date = (Long) map.get("weatherDate");
+//                        Long date2 = new Date().getTime();
+//                        if(((date2 - date) / 1000) >= 3600){ //数据保存一小时
+//                            System.out.println(" Get Data in Map,But Data expired,must Refresh!!!");
+//                            weatherVo = ToolsWeather.getInstance("成都");
+//                        }else {
+//                            weatherVo = JSONUtils.toBean(weather,WeatherVo.class);
+//                            System.out.println(" Get Data in Map!!!" + weatherVo);
+//                        }
+//                    }
+//                }
+//            }else{
+//                weatherVo = ToolsWeather.getInstance("成都");
+//                String json = JSONUtils.toJSONString(weatherVo);
+//                json = ToolsString.getStrRemoveBracket(json);
+//                System.out.println(" Get Data from Interface !!!" + json);
+//                map.put("weather",json);
+//                map.put("weatherDate",new Date().getTime());
+//            }
+
+
+            final String addresee = "温江";
+            List<WeatherVo> weatherVo = new ArrayList<WeatherVo>();
+            if(map.get("weather") != null){
+                String weather = (String) map.get("weather");
+                if(weather != null){
+                    if(!"".equals(weather)){
+                        Long date = (Long) map.get("weatherDate");
+                        Long date2 = new Date().getTime();
+                        if(((date2 - date) / 1000) >= 3600){ //数据保存一小时/超时刷新天气数据
+                            System.out.println(" Get Data in Map,But Data expired,must Refresh!!!");
+                            weatherVo = ToolsWeather.getListInstance(addresee,3);
+                            String json = JSONUtils.toJSONString(weatherVo);
+                            System.out.println(" Get Data from Interface !!!");
+                            map.put("weather",json);
+                            map.put("weatherDate",new Date().getTime());
+                        }else {
+                            weatherVo = JSONUtils.toList(weather,WeatherVo.class);
+                            System.out.println(" Get Data in Map!!!");
+                        }
+                    }
+                }
+            }else{
+                weatherVo = ToolsWeather.getListInstance(addresee,3);
+                String json = JSONUtils.toJSONString(weatherVo);
+                System.out.println(" Get Data from Interface !!!");
+                map.put("weather",json);
+                map.put("weatherDate",new Date().getTime());
+            }
+
+            request.setAttribute("weatherVo",weatherVo);
+        }
+        return "mobile/meeting/userMeeting";
+    }
+
+
+
+    /**
+     * meeting/myMeetingNoUserMap?id=
+     * 会议页面
+     * @param id
+     * @author XGB
+     * @date 2018-05-21 17:14
+     */
+    @RequestMapping("myMeetingNoUserMap")
+    public String myMeetingNoUserMap(HttpServletRequest request, String id){
         Meeting meeting ;
         if(id != null){
             try{
@@ -139,10 +237,84 @@ public class MeetingController {
                         System.out.println(" Get it in databases!!!" + meeting);
                     }
                 }
+
+                List<MeetingCoordinate> listMap = meetingCoordinateService.getListByMeetingId(id);
+                StringBuffer stringBuffer = new StringBuffer();
+                stringBuffer.append("[");
+                if(listMap != null){
+                    if(listMap.size() > 0){
+                        for(int i = 0;i < listMap.size();i ++){
+                            if(i + 1 < listMap.size()){
+                                stringBuffer.append("[");
+                                stringBuffer.append(listMap.get(i).getX());
+                                stringBuffer.append(",");
+                                stringBuffer.append(listMap.get(i).getY());
+                                stringBuffer.append("]");
+                                if(listMap.size() > 1){
+                                    stringBuffer.append(",");
+                                }
+                            }
+                            if(i + 1 == listMap.size()){
+                                stringBuffer.append("[");
+                                stringBuffer.append(listMap.get(i).getX());
+                                stringBuffer.append(",");
+                                stringBuffer.append(listMap.get(i).getY());
+                                stringBuffer.append("]");
+                            }
+
+                        }
+                    }
+                }
+                stringBuffer.append("]");
+                System.out.println("positions:" + stringBuffer.toString());
+                request.setAttribute("listMap",listMap);
+                request.setAttribute("positions",stringBuffer.toString());
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
-        return "mobile/meeting/userMeeting";
+        return "mobile/meeting/userMeetingMap";
     }
+
+
+
+    /**
+     * meeting/getCoordinateNameNoUser
+     * 获取坐标点的名称
+     * @param position
+     * @author XGB
+     * @date 2018-05-14 15:42
+     */
+    @RequestMapping("getCoordinateNameNoUser")
+    @ResponseBody
+    public String getCoordinateNameNoUser(String position,HttpServletResponse response){
+        try{
+            Map map = MapMeetingCache.getInstance().getMap();
+            if(map.get(position) != null){
+                String name = (String) map.get(position);
+                System.out.println(" Get it in Map!!!name:" + name);
+                response.getWriter().print(name);
+            }else{
+                MeetingCoordinate meetingCoordinate = meetingCoordinateService.getNameByPosition(position);
+                if(meetingCoordinate != null){
+                    if(meetingCoordinate.getCoordinate() != null){
+                        map.put(position,meetingCoordinate.getName());
+                        System.out.println(" Get it in databases!!!" + meetingCoordinate);
+                        response.getWriter().print(meetingCoordinate.getName());
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return "0";
+        }
+        return null;
+    }
+
+
+    @RequestMapping("myHotelNoUser")
+    public String myHotelNoUser(){
+        return "mobile/meeting/hotle";
+    }
+
 }

@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="${path}/resources/calendar12.24/css/style.css" />
     <script src="${path}/resources/calendar12.24/js/jQuery-2.1.4.min.js"></script>
     <script src="${path}/resources/calendar12.24/js/Ecalendar.jquery.min.js"></script>
+
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.6&key=barrysandy"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+
     <script>
         function saveOrUpdate() {
             var url = "${path}/meeting/saveOrUpdate";
@@ -62,6 +66,7 @@
                 <input type="hidden" name="createTime" value="${bean.createTime}"/>
                 <input type="hidden" name="updateTime" value="${bean.updateTime}"/>
                 <input type="hidden" name="signTotal" value="${bean.signTotal}"/>
+                <input type="hidden" id="mapPoint" name="mapPoint" value="${bean.mapPoint}"/>
                 <table class="m-table-forms inline">
                     <tr>
                         <td align="center" colspan="8" class="f-b-n" style="font-size:18px">会议</td>
@@ -146,6 +151,55 @@
                             </select>
                         </td>
                     </tr>
+                    <tr>
+                        <td class="table-header">地图显示初始点位<span style="color: red">*</span></td>
+                        <td colspan="7">地图标点：
+                            <div id="container" style="width: 100%;height: 500px;"></div>
+                        </td>
+                    </tr>
+                    <script type="text/javascript">
+                        var mapPoint = "[" + $("#mapPoint").val() + "]";
+                        var positionCenter = eval(mapPoint);
+                        //初始化地图对象，加载地图
+                        map = new AMap.Map("container", {
+                            resizeEnable: true,
+                            center: positionCenter,//地图中心点
+                            zoom: 13 //地图显示的缩放级别
+                        });
+                        markers = [];
+
+                        addMarker(positionCenter,"0");
+
+                        map.on('click', function(e) {
+                            var x = e.lnglat.getLng();
+                            var y = e.lnglat.getLat();
+                            p_x = x;
+                            p_y = y;
+
+                            $("#mapPoint").val(p_x + "," + p_y);
+                            var positionsTemp = [ [ x, y] ];
+                            addMarker(positionsTemp[0],"1");
+                        });
+
+                        /**
+                         * 移添加 Marker
+                         */
+                        function addMarker(position,type) {
+
+                            if(type == "1"){
+                                $(".amap-icon").remove();
+                            }
+                            new AMap.Marker({
+                                map: map,
+                                position: position,
+                                icon: new AMap.Icon({
+                                    size: new AMap.Size(40, 50),  //图标大小
+                                    image: "http://webapi.amap.com/theme/v1.3/images/newpc/way_btn2.png",
+                                    imageOffset: new AMap.Pixel(0, -60)
+                                })
+                            });
+                        }
+                    </script>
                     <tr>
                         <td class="table-header">详情<span style="color: red">*</span></td>
                         <td colspan="7">

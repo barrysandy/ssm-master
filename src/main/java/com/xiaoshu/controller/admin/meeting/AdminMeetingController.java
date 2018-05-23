@@ -6,6 +6,7 @@ import com.xiaoshu.api.Set;
 import com.xiaoshu.entity.Meeting;
 import com.xiaoshu.entity.MeetingSign;
 import com.xiaoshu.enumeration.EnumsMQName;
+import com.xiaoshu.po.DtoMeetingSign;
 import com.xiaoshu.service.MeetingService;
 import com.xiaoshu.service.MeetingSignService;
 import com.xiaoshu.service.MessageRecordService;
@@ -126,7 +127,7 @@ public class AdminMeetingController {
         System.out.println("id: " + id );
         String imageShare = "";
         try{
-            Meeting bean =  new Meeting("-1", "", "", "", "", "", "", "", "", "", 0, 0,"","");
+            Meeting bean =  new Meeting("-1", "", "", "", "", "", "", "", "", "", 0, 0,"","","116.397428, 39.90923");
             System.out.println("bean: " + bean );
             if(id != null){
                 if(StringUtils.isNotBlank(id) && !"-1".equals(id)){
@@ -178,6 +179,7 @@ public class AdminMeetingController {
                 System.out.println(" Update it !!!" + bean);
             }
         }catch(Exception e){
+            System.out.println("保存异常：" + e);
             return JsonUtils.turnJson(false,"error" + e.getMessage(),e);
         }
         return JsonUtils.turnJson(true,"success",null);
@@ -232,6 +234,90 @@ public class AdminMeetingController {
      * @author XGB
      * @date 2018-5-11 10:05
      */
+//    @RequestMapping("/readerExcelAndAddData")
+//    @ResponseBody
+//    public String readerExcelAndAddData(String id,String tableName,Integer x,Integer y,Integer type){
+//        int total = 0;
+//        try{
+//            //TODO 初始化参数
+//            if(x == null || x == 0){x = 7;}//设置默认解析标题数
+//            if(y == null || y == 0){y = 10;}//设置默认解析记录条数（包含标题行）
+//            if(tableName == null || "".equals(tableName)){tableName = "Sheet1";}//设置默认解析表名称
+//            String filePath = null;//文件地址
+//            if(y == null || y == 0){y = 10;}
+//            int maxX = x;
+//            if(type == 0){
+//                //删除以前的数据
+//                meetingSignService.deleteByMeetingId(id);
+//            }
+//
+//            if(Set.SYSTEM_ENVIRONMENTAL == 0){//测试环境
+//                filePath = "G:\\test.xlsx";
+//            }else if(Set.SYSTEM_ENVIRONMENTAL == 1){//正式环境
+//                //TODO 换取文件地址
+//                Meeting meeting = meetingService.getById(id);
+//                if(meeting.getExcelPath() != null){
+//                    filePath = ToolsImage.getFilePathByServer(meeting.getExcelPath());
+//                }
+//            }
+//
+//            //TODO 解析文档并添加新参会人员
+//            if(filePath != null){
+//                if(!"".equals(filePath)){
+//                    String nowTime = ToolsDate.getStringDate(ToolsDate.simpleSecond);
+//                    //TODO 获取导入数据的集合
+//                    List<MeetingSign> listMeetingSign = new ArrayList<MeetingSign>();
+//                    List<Object> list = ExcelReader.getListExcelObject(MeetingSign.class,filePath,tableName,x,y,maxX);
+//                    if(list != null){
+//                        for (int i = 0;i < list.size();i++){
+//                            Object listObject = list.get(i);
+//                            MeetingSign meetingSign = (MeetingSign)listObject;
+//                            if(meetingSign.getName() != null && meetingSign.getPhone()!= null){
+//                                //电话号码处理
+//                                String phone = meetingSign.getPhone().trim();
+//                                phone = phone.replaceAll("\\.","");
+//                                phone = phone.replaceAll("E10","");
+//
+//                                meetingSign.setId(UUID.randomUUID().toString());
+//                                meetingSign.setName(meetingSign.getName().trim());
+//                                meetingSign.setPhone(phone);
+//                                meetingSign.setCreateTime(nowTime);
+//                                meetingSign.setJoinDinner(0);
+//                                meetingSign.setMeetingId(id);
+//                                meetingSign.setSignCode(meetingSignService.getSignCode());
+//                                meetingSign.setStatus(0);
+//                                listMeetingSign.add(meetingSign);
+//                            }
+//                        }
+//                    }
+//
+//                    if(listMeetingSign != null){
+//                        if(listMeetingSign.size() > 0){
+//                            Iterator<MeetingSign> iterator = listMeetingSign.iterator();
+//                            while (iterator.hasNext()){
+//                                MeetingSign bean = iterator.next();
+//                                if(bean != null){
+//                                    int r = meetingSignService.save(bean);
+//                                    if(r != -1){
+//                                        total = total + r ;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                    //meetingSignService.saveList(listMeetingSign);
+//                    //total = listMeetingSign.size();
+//                }
+//            }
+//
+//        }catch(Exception e){
+//            e.printStackTrace();
+//            return String.valueOf(0);
+//        }
+//        return String.valueOf(total);
+//    }
+
+
     @RequestMapping("/readerExcelAndAddData")
     @ResponseBody
     public String readerExcelAndAddData(String id,String tableName,Integer x,Integer y,Integer type){
@@ -250,7 +336,7 @@ public class AdminMeetingController {
             }
 
             if(Set.SYSTEM_ENVIRONMENTAL == 0){//测试环境
-                filePath = "G:\\3715b6fcfbb6418fb4ed2269be48b48b.xlsx";
+                filePath = "G:\\test.xlsx";
             }else if(Set.SYSTEM_ENVIRONMENTAL == 1){//正式环境
                 //TODO 换取文件地址
                 Meeting meeting = meetingService.getById(id);
@@ -265,22 +351,33 @@ public class AdminMeetingController {
                     String nowTime = ToolsDate.getStringDate(ToolsDate.simpleSecond);
                     //TODO 获取导入数据的集合
                     List<MeetingSign> listMeetingSign = new ArrayList<MeetingSign>();
-                    List<Object> list = ExcelReader.getListExcelObject(MeetingSign.class,filePath,tableName,x,y,maxX);
+                    List<Object> list = ExcelReader.getListExcelObject(DtoMeetingSign.class,filePath,tableName,x,y,maxX);
                     if(list != null){
                         for (int i = 0;i < list.size();i++){
                             Object listObject = list.get(i);
-                            MeetingSign meetingSign = (MeetingSign)listObject;
-                            if(meetingSign.getName() != null && meetingSign.getPhone()!= null){
-                                //电话号码处理
-                                String phone = meetingSign.getPhone().trim();
-                                phone = phone.replaceAll("\\.","");
-                                phone = phone.replaceAll("E10","");
-
-                                meetingSign.setId(UUID.randomUUID().toString());
-                                meetingSign.setName(meetingSign.getName().trim());
-                                meetingSign.setPhone(phone);
-                                meetingSign.setCreateTime(nowTime);
-                                meetingSign.setJoinDinner(0);
+                            DtoMeetingSign dtoMmeetingSign = (DtoMeetingSign)listObject;
+                            if(dtoMmeetingSign.get姓名() != null && dtoMmeetingSign.get电话()!= null){
+                                MeetingSign meetingSign = new MeetingSign();
+                                meetingSign.setId(UUID.randomUUID().toString());//ID
+                                meetingSign.setName(dtoMmeetingSign.get姓名().trim());//name
+                                meetingSign.setCompany(dtoMmeetingSign.get公司());//company
+                                meetingSign.setPersonType(dtoMmeetingSign.get类别());//personType
+                                meetingSign.setPosition(dtoMmeetingSign.get职位());//position
+                                meetingSign.setSex(dtoMmeetingSign.get性别());//sex
+                                String phone = dtoMmeetingSign.get电话().trim();//电话号码处理
+                                phone = phone.replaceAll("\\.","").replaceAll("E10","");
+                                meetingSign.setPhone(phone);//phone
+                                meetingSign.setCreateTime(nowTime);//nowTime
+                                if(dtoMmeetingSign.get晚宴() != null){//joinDonner
+                                    if(!"".equals(dtoMmeetingSign.get晚宴())){
+                                        if("是".equals(dtoMmeetingSign.get晚宴())){
+                                            meetingSign.setJoinDinner(1);
+                                        }
+                                        if("否".equals(dtoMmeetingSign.get晚宴())){
+                                            meetingSign.setJoinDinner(0);
+                                        }
+                                    }
+                                }
                                 meetingSign.setMeetingId(id);
                                 meetingSign.setSignCode(meetingSignService.getSignCode());
                                 meetingSign.setStatus(0);
@@ -314,7 +411,6 @@ public class AdminMeetingController {
         }
         return String.valueOf(total);
     }
-
 
     /**
      * meeting/downloadExcel
@@ -367,8 +463,7 @@ public class AdminMeetingController {
             String params = "meetingId=" + id ;
             DtoMessage dtoMessage = new DtoMessage(UUID.randomUUID().toString(), url, "get" ,params , null);
             String message = DtoMessage.transformationToJson(dtoMessage);
-            System.out.println("=================" + message);
-            deadLetterPublishService.send(EnumsMQName.DEAD_ORDER_CHECK,message);
+            deadLetterPublishService.send(EnumsMQName.DEAD_TEN_SECONDS,message);
 
         }catch(Exception e) {
             e.printStackTrace();
@@ -401,10 +496,9 @@ public class AdminMeetingController {
     }
 
 
-
     /**
      * meeting/interfaceGetMeetingUser?signCode=
-     * 签到条形码查询
+     * 签到条形码查询（纯数字查询）
      * @author XGB
      * @date 2018-05-14 15:16
      */
@@ -447,6 +541,48 @@ public class AdminMeetingController {
         return null;
     }
 
+
+    /**
+     * meeting/interfaceGetMeetingUserByName?signCode=
+     * 签到条形码查询（名字查询）
+     * @author XGB
+     * @date 2018-05-21 9:54
+     */
+    @RequestMapping(value = "/interfaceGetMeetingUserByName", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String interfaceGetMeetingUserByName(String signCode,String id){
+        if(signCode != null && id != null){
+            if("".equals(signCode) || "".equals(id)){
+                return "0";
+            }
+        }
+        try{
+            List<MeetingSign> list = meetingSignService.getSignCodeByName(signCode,id);
+            String json = JSONUtils.toJSONString(list);
+            return json;
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    /**
+     * meeting/interfaceGetMeetingUserByNameToPage?signCode=
+     * 签到条形码查询（名字查询）
+     * @author XGB
+     * @date 2018-05-21 9:54
+     */
+    @RequestMapping("interfaceGetMeetingUserByNameToPage")
+    public String interfaceGetMeetingUserByNameToPage(HttpServletRequest request,String signCode,String id){
+        try{
+            List<MeetingSign> list = meetingSignService.getSignCodeByName(signCode,id);
+            request.setAttribute("list",list);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        return "admin/meeting/meetingSign/meetingSignCode_viewNew";
+    }
 
 
     /**

@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
  * @date: 2018-01-17 10:30
  */
 public class MessageService {
-	
-	static Logger logger = LoggerFactory.getLogger(MessageService.class);
+
+	private static Logger logger = LoggerFactory.getLogger(MessageService.class);
 	
 	/**
 	 * 处理微信发来的请求
@@ -51,7 +51,10 @@ public class MessageService {
 			// 消息id，64位整型
 			//String MsgId = requestMap.get("MsgId");
 			//System.out.println("消息id，64位整型："+MsgId);
-			//logger.info("fromUserName is:" +fromUserName+" toUserName is:" +toUserName+" msgType is:" +msgType);
+
+			logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+			logger.info("fromUserName is:" +fromUserName+" toUserName is:" +toUserName+" msgType is:" +msgType);
+			logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 			
 
 			if (msgType.equals(MessageUtil.REQ_MESSAGE_TYPE_TEXT)) {// 文本消息（完成）

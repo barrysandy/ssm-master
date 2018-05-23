@@ -73,6 +73,12 @@ public class MeetingSignServiceImpl implements MeetingSignService{
 		return mapper.getSignCode(signCode,id);
 	}
 
+	/** select ByName */
+	@Override
+	public List<MeetingSign> getSignCodeByName(String name,String id) throws Exception {
+		return mapper.getSignCodeByName(name,id);
+	}
+
 	/** select ByPone */
 	@Override
 	public MeetingSign getByPone( String phone,String id) throws Exception {

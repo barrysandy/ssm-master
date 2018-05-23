@@ -8,6 +8,7 @@ import com.xiaoshu.entity.*;
 import com.xiaoshu.tools.ToolsDate;
 import com.xiaoshu.tools.ToolsHttpRequest;
 import com.xiaoshu.tools.ToolsPage;
+import com.xiaoshu.tools.ToolsPhone;
 import com.xiaoshu.tools.sendMsg.IndustrySMS;
 import com.xiaoshu.tools.sendMsg.MsgTemplate;
 import com.xiaoshu.util.JsonUtils;
@@ -122,7 +123,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 						String msg =  (String) map.get("msg");
 						String msgId = UUID.randomUUID().toString();
 
-						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1);
+						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1,userName);
 						messageRecordMapper.save(messageRecord);
 					}else {
 						log.info("------------ [LOG["+ nowTime +"]sendSingleBuyMsg] HasSend Code: " + code + " ------------");
@@ -191,7 +192,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 										String msg =  (String) map.get("msg");
 										String msgId = UUID.randomUUID().toString();
 
-										MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1);
+										MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1,userName);
 										messageRecordMapper.save(messageRecord);
 
 									}else {
@@ -253,7 +254,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 						String msg =  (String) map.get("msg");
 						String msgId = UUID.randomUUID().toString();
 
-						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1);
+						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1,userName);
 						messageRecordMapper.save(messageRecord);
 					}else {
 						log.info("------------ [LOG["+ nowTime +"]sendSingleGroupSucBuyToBuyMsg] HasSend Code: " + code + " ------------");
@@ -327,7 +328,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 												String msg =  (String) map.get("msg");
 												String msgId = UUID.randomUUID().toString();
 
-												MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1);
+												MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1,userName);
 												int i = messageRecordMapper.save(messageRecord);
 												if(i > 0){
 													//TODO 退款业务
@@ -388,7 +389,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 						String msg =  (String) map.get("msg");
 						String msgId = UUID.randomUUID().toString();
 
-						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1);
+						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1,userName);
 						messageRecordMapper.save(messageRecord);
 					}else {
 						log.info("------------ [LOG["+ nowTime +"]sendGroupBuyMsg] HasSend Code: " + code + " ------------");
@@ -453,7 +454,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 										String msg =  (String) map.get("msg");
 										String msgId = UUID.randomUUID().toString();
 
-										MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1);
+										MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1,userName);
 										messageRecordMapper.save(messageRecord);
 
 									}else {
@@ -513,7 +514,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 						String msg =  (String) map.get("msg");
 						String msgId = UUID.randomUUID().toString();
 
-						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1);
+						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1,userName);
 						messageRecordMapper.save(messageRecord);
 					}else {
 						log.info("------------ [LOG["+ nowTime +"]sendGroupBuySucMassToBuyMsg] HasSend Code: " + code + " ------------");
@@ -587,7 +588,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 												String msg =  (String) map.get("msg");
 												String msgId = UUID.randomUUID().toString();
 
-												MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1);
+												MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, msgTemple,order.getUserId(), status, new Date(), new Date(), msg,code, 1,userName);
 												messageRecordMapper.save(messageRecord);
 
 											}else {
@@ -653,7 +654,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 						String msg =  (String) map.get("msg");
 						String msgId = UUID.randomUUID().toString();
 
-						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1);
+						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1,userName);
 						messageRecordMapper.save(messageRecord);
 					}else {
 						log.info("------------ [LOG["+ nowTime +"]sendRefundMsg] HasSend Code: " + code + " ------------");
@@ -703,7 +704,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 							String msg =  (String) map.get("msg");
 							String msgId = UUID.randomUUID().toString();
 
-							MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1);
+							MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1,userName);
 							messageRecordMapper.save(messageRecord);
 						}else {
 							log.info("------------ [LOG["+ nowTime +"]sendWiningMsg] HasSend Code: " + code + " ------------");
@@ -746,7 +747,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 						String status = (String) map.get("status");
 						String msg =  (String) map.get("msg");
 						String msgId = UUID.randomUUID().toString();
-						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1);
+						MessageRecord messageRecord = new MessageRecord(msgId, userPhone, sign, content,order.getUserId(), status, new Date(), new Date(), msg ,code, 1,userName);
 						messageRecordMapper.save(messageRecord);
 					}else {
 						log.info("------------ [LOG["+ nowTime +"]sendRefundFailMsg] HasSend Code: " + code + " ------------");
@@ -797,26 +798,30 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 										//TODO 短信参数组装
 										String signName = meetingSign.getName();
 										String signPhone = meetingSign.getPhone();
-										String sign = messageTemple.getSign();
-										String meetingTitle = meeting.getTitle();
-										String meetingCode = com.xiaoshu.api.Set.SYSTEM_URL + MeetingController.MEETING_URL2 + id + "&code=" + meetingSign.getSignCode();
-										//
-										// meetingCode = URLEncoder.encode(meetingCode ,"utf-8");
-										String meetingUserName = meeting.getName();
-										String meetingUserPhone = meeting.getPhone();
-										String meetingTime = meeting.getBeginTime() + " - " + meeting.getEndTime() ;
-										String address = meeting.getAddress();
+										//电话号码验证
+										if(ToolsPhone.isMobileNO(signPhone)){
+											String sign = messageTemple.getSign();
+											String meetingTitle = meeting.getTitle();
+											String meetingCode = com.xiaoshu.api.Set.SYSTEM_URL + MeetingController.MEETING_URL2 + id + "&code=" + meetingSign.getSignCode();
+											// meetingCode = URLEncoder.encode(meetingCode ,"utf-8");
+											String meetingUserName = meeting.getName();
+											String meetingUserPhone = meeting.getPhone();
+											String meetingTime = meeting.getBeginTime() + " - " + meeting.getEndTime() ;
+											String address = meeting.getAddress();
 
-										//"您好+，+邀请你参加+会议，你的会议签到码为+，联系人：+ 联系人电话：+，会议地址+，会议时间+，感谢你准时参加。【+】";
-										String[] param = new String[]{signName,sign,meetingTitle,meetingCode,meetingUserName,meetingUserPhone,address,meetingTime,sign};
-										HashMap<String, Object> map = IndustrySMS.link(signPhone, content, "",param);
-										String status = (String) map.get("status");
-										String msg =  (String) map.get("msg");
-										String msgId = UUID.randomUUID().toString();
-										MessageRecord messageRecord = new MessageRecord(msgId, signPhone, sign, content,meetingSign.getId(), status, new Date(), new Date(), msg ,code, 1);
-										messageRecordMapper.save(messageRecord);
-										sendTotal ++;
-										log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] send Code: " + code + " ------------");
+											//"尊敬的+您好，+将于+召开，您的数字签到码是+，点击显示入场签到条形码+，签到工作将于+准时开始，+。期待您的光临！【+】";
+											String[] param = new String[]{signName,meetingTitle,"明天即2018年5月25日在温江皇冠假日酒店",meetingSign.getSignCode(),meetingCode,"5月25日早上9：00","到达现场后请从酒店大堂移步2楼宴会厅长廊签到并领取入场徽章",sign};
+											HashMap<String, Object> map = IndustrySMS.link(signPhone, content, "",param);
+											String status = (String) map.get("status");
+											String msg =  (String) map.get("msg");
+											String msgId = UUID.randomUUID().toString();
+											MessageRecord messageRecord = new MessageRecord(msgId, signPhone, sign, content,meetingSign.getId(), status, new Date(), new Date(), msg ,code, 1,signName);
+											messageRecordMapper.save(messageRecord);
+											sendTotal ++;
+											log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] send Code: " + code + " ------------");
+										}else {
+											log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] Your Phone not Mobile: " + code + " ------------");
+										}
 									}else {
 										log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] HasSend Code: " + code + " ------------");
 									}

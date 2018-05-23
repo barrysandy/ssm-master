@@ -1,2 +1,2 @@
-# ssm-master
-new ssm project
+# ssm
+ssm wechat project

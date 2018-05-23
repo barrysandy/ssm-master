@@ -136,7 +136,47 @@
             $("#listForm").submit();
         }
 
+
         function doExcle(type) {
+            if(type == 0 || type == "0"){
+                layer.open({
+                    type: 1,
+                    title: '操作提示',
+                    skin: 'layui-layer-rim',
+                    area: ['450px', '220px'],
+                    content: '<div style="padding: 42px 112px; font-size: 16px; color: #808080;" >执行该项操作会清空所有数据,确定要执行嘛？</div>',
+                    btn: ['确认','取消'],
+                    yes: function(){
+                        layer.closeAll();
+                        doExcleIt(type);
+                    },
+                    btn2: function(){
+                        console.log('no');
+                    }
+                });
+            }
+            if(type == 1 || type == "1"){
+                layer.open({
+                    type: 1,
+                    title: '操作提示',
+                    skin: 'layui-layer-rim',
+                    area: ['450px', '220px'],
+                    content: '<div style="padding: 42px 112px; font-size: 16px; color: #808080;" >确定要执行数据追加操作嘛（该模式追加不会添加重复数据）？</div>',
+                    btn: ['确认','取消'],
+                    yes: function(){
+                        layer.closeAll();
+                        doExcleIt(type);
+                    },
+                    btn2: function(){
+                        console.log('no');
+                    }
+                });
+            }
+
+        }
+
+
+        function doExcleIt(type) {
             var url = "${path}/meeting/readerExcelAndAddData";
             var id = '${id}';
             var tableName = $("#tableName").val();
@@ -250,12 +290,14 @@
                                 <table class="m-table" id="table1" an-datagrid style="width:100%">
                                     <thead>
                                     <tr>
-                                        <th align="center" style="width:5%">序号</th>
-                                        <th style="width:10%" align="center">姓名</th>
-                                        <th style="width:10%" align="center">手机电话</th>
-                                        <th style="width:8%" align="center">签到码</th>
-                                        <th style="width:8%" align="center">单位-公司-机构</th>
-                                        <th style="width:10%;" align="center">类型</th>
+                                        <th align="center" style="width:3%">序号</th>
+                                        <th style="width:5%" align="center">姓名</th>
+                                        <th style="width:3%" align="center">性别</th>
+                                        <th style="width:8%" align="center">手机电话</th>
+                                        <th style="width:5%" align="center">签到码</th>
+                                        <th style="width: 250px;" align="center">条形码</th>
+                                        <th style="width:5%" align="center">单位-公司-机构</th>
+                                        <th style="width:5%;" align="center">类型</th>
                                         <th style="width:5%" align="center">职位</th>
                                         <th style="width:5%" align="center">是否参加晚宴</th>
                                         <th style="width:5%" align="center">签到状态</th>
@@ -267,8 +309,12 @@
                                         <tr>
                                             <td align="center">${status.index+1}</td>
                                             <td align="center">${bean.name}</td>
+                                            <td align="center">${bean.sex}</td>
                                             <td align="center">${bean.phone}</td>
                                             <td align="center">${bean.signCode}</td>
+                                            <td align="center">
+                                                <img style="width: 200px;" src="${pathUrl}/${bean.meetingId}/${bean.signCode}.jpeg" width="80%"  onerror="this.src='${pathUrl}/${bean.meetingId}/${bean.signCode}.jpg'" />
+                                            </td>
                                             <td align="center">${bean.company}</td>
                                             <td align="center">${bean.personType}</td>
                                             <td align="center">${bean.position}</td>

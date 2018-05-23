@@ -65,6 +65,9 @@ public class Meeting implements Serializable {
 	@Column(name="ADDRESS")
 	private String address;//会议地址
 
+	@Column(name="MAP_POINT")
+	private String mapPoint;//地图初始化位置
+
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
@@ -181,9 +184,17 @@ public class Meeting implements Serializable {
 		this.address = address;
 	}
 
+	public String getMapPoint() {
+		return mapPoint;
+	}
+
+	public void setMapPoint(String mapPoint) {
+		this.mapPoint = mapPoint;
+	}
+
 	public Meeting() { }
 
-	public Meeting(String id, String image, String title, String descM, String name, String phone, String createTime, String updateTime, String beginTime, String endTime, Integer signTotal, int status, String excelPath, String address) {
+	public Meeting(String id, String image, String title, String descM, String name, String phone, String createTime, String updateTime, String beginTime, String endTime, Integer signTotal, int status, String excelPath, String address, String mapPoint) {
 		this.id = id;
 		this.image = image;
 		this.title = title;
@@ -198,6 +209,7 @@ public class Meeting implements Serializable {
 		this.status = status;
 		this.excelPath = excelPath;
 		this.address = address;
+		this.mapPoint = mapPoint;
 	}
 
 	@Override
@@ -217,6 +229,7 @@ public class Meeting implements Serializable {
 				", status=" + status +
 				", excelPath='" + excelPath + '\'' +
 				", address='" + address + '\'' +
+				", mapPoint='" + mapPoint + '\'' +
 				'}';
 	}
 }

@@ -20,13 +20,13 @@
 	<script src="${path}/resources/js/jquery-1.8.3.min.js"></script>
 	<title>签到码</title>
 </head>
-<body>
+<body style="background:url('${path}/resources/img/bg_meeting.jpg'); ">
 
 <div align="center">
-	<h4 style="margin-top: 2rem;color: green;font-size: 1.4rem;">${meeting.title }</h4>
+	<h4 style="margin-top: 2rem;color: white;font-size: 1.4rem;">${meeting.title }</h4>
 	<div align="center">
-		<h2 style="color: red;font-size: 1.4rem;">签到码：${meetingSign.signCode }</h2>
-		<h2 style="color: black;font-size: 1rem;">也可以使用你的电话号码进行签到</h2>
+		<h2 style="color: white;font-size: 1.4rem;">签到码：${meetingSign.signCode }</h2>
+		<h2 style="color: white;font-size: 1rem;">也可以使用你的电话号码进行签到</h2>
 		<img style="margin-top: 2rem;" src="${code}" width="80%"/>
 		<h2 id="status0" style="color: grey;font-size: 1.4rem;">等待扫描</h2>
 		<div  id="status1" style="display: none;">
@@ -38,7 +38,7 @@
 			<img style="margin-top: 0rem;" src="${path}/resources/img/icon/yes.png" width=8%"/>
 		</div>
 		<div>
-			<h2><a href="${path}/meeting/myMeetingNoUser?id=${meeting.id}" style="color: black;font-size: 1rem;text-decoration:none;">查看会议流程</a></h2>
+			<h2><a href="${path}/meeting/myMeetingNoUser?id=${meeting.id}" style="color: white;font-size: 1rem;text-decoration:none;">查看会议流程</a></h2>
 		</div>
 	</div>
 </div>

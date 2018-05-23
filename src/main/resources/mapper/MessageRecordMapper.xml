@@ -14,11 +14,13 @@
 	    <result property="descM" column="DESC_M" javaType="java.lang.String"></result>
 	    <result property="code" column="CODE" javaType="java.lang.String"></result>
 	    <result property="status" column="STATUS" javaType="java.lang.Integer"></result>
+	    <result property="targetName" column="TARGET_NAME" javaType="java.lang.String"></result>
+
 	</resultMap>
 
 	<!-- 按照模糊分页查询列表 -->
 	<select id="listByKeyWord" parameterType="java.util.Map" resultMap="MessageRecord">
-   		SELECT ID, MOBILE, SIGN, CONTENT, USER_ID, RESPONSE_STATUS, CREATE_TIME, UPDATE_TIME, DESC_M, CODE , STATUS
+   		SELECT ID, MOBILE, SIGN, CONTENT, USER_ID, RESPONSE_STATUS, CREATE_TIME, UPDATE_TIME, DESC_M, CODE , STATUS,TARGET_NAME
 		FROM  message_record
 		WHERE CREATE_TIME &gt; #{date1 } AND CREATE_TIME &lt; #{date2 }
 		<if test="keyword != null and keyword != ''">

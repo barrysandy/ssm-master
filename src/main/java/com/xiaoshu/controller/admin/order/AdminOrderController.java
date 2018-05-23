@@ -2,7 +2,9 @@ package com.xiaoshu.controller.admin.order;
 
 import com.xiaoshu.entity.FocusedUserInfo;
 import com.xiaoshu.entity.Order;
+import com.xiaoshu.entity.OrderCodes;
 import com.xiaoshu.service.FocusedUserInfoService;
+import com.xiaoshu.service.OrderCodesService;
 import com.xiaoshu.service.OrderService;
 import com.xiaoshu.tools.ToolsDate;
 import com.xiaoshu.util.JsonUtils;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,6 +30,8 @@ import java.util.Map;
 public class AdminOrderController {
 
     @Resource private OrderService orderService;
+    @Resource private OrderCodesService orderCodesService;
+
     @Resource private FocusedUserInfoService focusedUserInfoService;
 
     /**
@@ -331,4 +336,23 @@ public class AdminOrderController {
             }
         }
     }
+
+
+    /**
+     * 查看订单的核销码
+     * @return view
+     * @author XGB
+     * @date 2018-05-20 15:46
+     */
+    @RequestMapping("/listOrderCode")
+    public String listOrderCode(Integer id, HttpServletRequest request) {
+        try{
+            List<OrderCodes> list = orderCodesService.listByOrderId(id);
+            request.setAttribute("list",list);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return "admin/orderCode/list";
+    }
+
 }

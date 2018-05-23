@@ -99,6 +99,9 @@ public class WeChatController {
 			}
             //调用CoreService类的processRequest方法接收、处理消息，并得到处理结果；
 			String resp = MessageService.processRequest(request,sign);
+			log.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+			log.info("resp:" + resp);
+			log.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 			return resp;
 		}catch (Exception e){
 			e.printStackTrace();

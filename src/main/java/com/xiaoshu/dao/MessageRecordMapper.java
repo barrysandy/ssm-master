@@ -11,8 +11,8 @@ import java.util.List;
 public interface MessageRecordMapper {
 
 	/** save one */
-	@Insert("INSERT INTO message_record (ID, MOBILE, SIGN, CONTENT, USER_ID, RESPONSE_STATUS, CREATE_TIME, UPDATE_TIME, DESC_M, CODE, STATUS ) " +
-			"VALUES(#{id},#{mobile},#{sign},#{content},#{userId},#{responseStatus},#{createTime},#{updateTime},#{descM},#{code},#{status} )")
+	@Insert("INSERT INTO message_record (ID, MOBILE, SIGN, CONTENT, USER_ID, RESPONSE_STATUS, CREATE_TIME, UPDATE_TIME, DESC_M, CODE, STATUS,TARGET_NAME ) " +
+			"VALUES(#{id},#{mobile},#{sign},#{content},#{userId},#{responseStatus},#{createTime},#{updateTime},#{descM},#{code},#{status},#{targetName} )")
 	Integer save(MessageRecord bean);
 
 	/** update 状态 */
@@ -21,7 +21,7 @@ public interface MessageRecordMapper {
 
 	/** update all */
 	@Update("UPDATE message_record SET MOBILE=#{mobile},SIGN=#{sign},CONTENT=#{content},USER_ID=#{userId},RESPONSE_STATUS=#{responseStatus}," +
-			"CREATE_TIME=#{createTime},UPDATE_TIME=#{updateTime},DESC_M=#{descM},STATUS=#{status} WHERE ID=#{id} ")
+			"CREATE_TIME=#{createTime},UPDATE_TIME=#{updateTime},DESC_M=#{descM},STATUS=#{status},TARGET_NAME=#{targetName} WHERE ID=#{id} ")
 	Integer updateAll(MessageRecord bean);
 
 	/** delete ById */
@@ -29,7 +29,7 @@ public interface MessageRecordMapper {
 	Integer deleteById(@Param("id") String id);
 
 	/** select ById */
-	@Select("SELECT ID, MOBILE, SIGN, CONTENT, USER_ID, RESPONSE_STATUS, CREATE_TIME, UPDATE_TIME, DESC_M, STATUS FROM message_record WHERE ID=#{id}")
+	@Select("SELECT ID, MOBILE, SIGN, CONTENT, USER_ID, RESPONSE_STATUS, CREATE_TIME, UPDATE_TIME, DESC_M, STATUS,TARGET_NAME FROM message_record WHERE ID=#{id}")
 	MessageRecord getById(@Param("id") String id);
 
 	/** 按照签名或者短信内容查询消息记录集合 */

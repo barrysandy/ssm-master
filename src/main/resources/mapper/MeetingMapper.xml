@@ -3,7 +3,7 @@
 <mapper namespace="com.xiaoshu.dao.MeetingMapper">
 	<!-- 按照模糊分页查询列表 -->
 	<select id="getListByKeyWord" parameterType="java.util.Map" resultType="com.xiaoshu.entity.Meeting">
-		SELECT ID,IMAGE,TITLE,DESC_M,NAME,PHONE,CREATE_TIME,UPDATE_TIME,BEGIN_TIME,END_TIME,SIGN_TOTAL,STATUS,EXCEL_PATH
+		SELECT ID,IMAGE,TITLE,DESC_M,NAME,PHONE,CREATE_TIME,UPDATE_TIME,BEGIN_TIME,END_TIME,SIGN_TOTAL,STATUS,EXCEL_PATH,ADDRESS,MAP_POINT
 		FROM  t_meeting WHERE 1=1
 		<if test="status != -1 ">
 			AND STATUS = #{status}

@@ -1,6 +1,9 @@
 package com.xiaoshu.tools;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +15,9 @@ import java.net.URLConnection;
 
 
 public class ToolsHttpRequest {
+
+    private static Logger logger = LoggerFactory.getLogger(ToolsHttpRequest.class);
+
     /**
      * 向指定URL发送GET方法的请求
      * 
@@ -22,13 +28,18 @@ public class ToolsHttpRequest {
      * @return URL 所代表远程资源的响应结果
      */
     public static String sendGet(String url, String param) {
+
         String result = "";
         BufferedReader in = null;
         try {
             String urlNameString = url + "?" + param;
-            System.out.println("===================This URL GET " + url + " !!!");
+            logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+            logger.info("------------ [log.info System Message] ToolsHttpRequest.sendGet: This URL GET " + url + " !!!");
+            logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
             if(urlNameString.contains("scan/interfaceScanMQ?id=1")){
-                System.out.println("===================This URL GET " + urlNameString + " DoNothing !!!");
+                logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                logger.info("------------ [log.info System Message] ToolsHttpRequest.sendGet: This URL GET " + urlNameString + " DoNothing !!!");
+                logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                 return null;
             }
             URL realUrl = new URL(urlNameString);

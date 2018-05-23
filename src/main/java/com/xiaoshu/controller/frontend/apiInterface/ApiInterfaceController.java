@@ -9,6 +9,7 @@ import com.xiaoshu.tools.ToolsString;
 import com.xiaoshu.vo.CommodityVoQRCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -31,6 +32,8 @@ public class ApiInterfaceController extends BaseController {
 	@Resource private WechatActivityService wechatActivityService;
 	@Resource private CommodityService commodityService;
 	@Resource private CommodityGroupService commodityGroupService;
+	@Resource private KeyWordsService keyWordsService;
+
 
 
 	/**
@@ -264,5 +267,38 @@ public class ApiInterfaceController extends BaseController {
 	}
 
 
+
+	/**
+	 * 关键词查询 apiInterface/interfaceGetKey
+	 * @param keyes 关键字
+	 * @return menuId 关键字所属公众号
+	 * @return valuess 匹配到的值
+	 * @author XGB
+	 * @date 2018-01-16 16:09
+	 */
+	@RequestMapping(value = "/interfaceGetKey", method = RequestMethod.GET,produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String interfaceGetKey(String menuId, String keyes){
+		String json = null;
+		try{
+			if(keyes != null && menuId != null && !"".equals(keyes) && !"".equals(menuId)){
+				keyes = ToolsASCIIChang.asciiToString(keyes);
+				KeyWords keyWords = keyWordsService.selectByKey(menuId,keyes);
+				if(keyWords != null){
+					keyWords.setCreateTime(null);
+					keyWords.setUpdateTime(null);
+					System.out.println("keyWords: " + keyWords);
+					json = JSONUtils.toJSONString(keyWords);
+					System.out.println("keyWords json1: " + json);
+					json = ToolsString.getStrRemoveBracket(json);
+					System.out.println("keyWords json2: " + json);
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		System.out.println("keyWords json3: " + json);
+		return json;
+	}
 
 }

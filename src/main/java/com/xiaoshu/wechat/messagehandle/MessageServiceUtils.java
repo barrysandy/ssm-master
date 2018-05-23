@@ -25,6 +25,8 @@ import java.util.Map;
 
 import com.xiaoshu.wechat.response.Video;
 import com.xiaoshu.wechat.response.Image;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,7 +37,8 @@ import javax.servlet.http.HttpServletRequest;
  * @date: 2018-01-17 10:50
  */
 public class MessageServiceUtils {
-	
+
+	private static Logger logger = LoggerFactory.getLogger(MessageServiceUtils.class);
 	/**
 	 * 处理文字信息
 	 */
@@ -46,10 +49,12 @@ public class MessageServiceUtils {
 			String contentStr = content;
 			content = ToolsASCIIChang.stringToAscii(content);
 			respContent = Robot.RobotAnser(menuId,"AUTO_REPLY" );//默认回复内容
-
+			logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+			logger.info("respContent is:" + respContent);
+			logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 			//微信聊天机器人
 			if(content != null){
-				if("".equals(respContent)|| respContent == null){
+				if("".equals(respContent) || respContent == null){
 					return MessageResponse.getTextMessage(fromUserName , toUserName , "该公众号暂时无法回复，请稍后再试！");
 				}
 				else{
@@ -76,13 +81,13 @@ public class MessageServiceUtils {
 							return AutoReply(menuId,toUserName,fromUserName);
                         }
 						else if(respContent.indexOf(":\"text\"") != -1){//返回类型是text
-							KeyWords keyWord = (KeyWords) JSONUtils.toBean(respContent, KeyWords.class);
+							KeyWords keyWord = JSONUtils.toBean(respContent, KeyWords.class);
 							respContent = keyWord.getValuess();
 							return MessageResponse.getTextMessage(fromUserName , toUserName , respContent);
 						}
 						else if(respContent.indexOf(":\"art\"") != -1){//返回类型是art
 							List<Article> articleList = new ArrayList<Article>();
-							KeyWords keyWord = (KeyWords) JSONUtils.toBean(respContent, KeyWords.class);
+							KeyWords keyWord = JSONUtils.toBean(respContent, KeyWords.class);
 							String val = keyWord.getValuess();
 							int current = Integer.parseInt(val);
 							String respJson = Robot.robotGetArtByPeriod(menuId,current);//到自己的数据库匹配文章
@@ -90,20 +95,22 @@ public class MessageServiceUtils {
 							return sendArt(articleList, respJson, fromUserName, toUserName);
 						}
 						else if(respContent.indexOf(":\"voice\"") != -1){//返回类型是voice
-							KeyWords keyWord = (KeyWords) JSONUtils.toBean(respContent, KeyWords.class);
+							KeyWords keyWord = JSONUtils.toBean(respContent, KeyWords.class);
 							Voice voice = new Voice();
 							voice.setMediaId(keyWord.getValuess());
 							return MessageResponse.getVoiceMessage(toUserName, fromUserName, voice);
 						}
 						else if(respContent.indexOf(":\"video\"") != -1){//返回类型是video
-							KeyWords keyWord = (KeyWords) JSONUtils.toBean(respContent, KeyWords.class);
+							KeyWords keyWord = JSONUtils.toBean(respContent, KeyWords.class);
 							Video video = new Video();
 							video.setMediaId(keyWord.getValuess());
 							return MessageResponse.getVideoMessage(toUserName, fromUserName, video);
 						}
 						else if(respContent.indexOf(":\"image\"") != -1){//返回类型是image
-							KeyWords keyWord = (KeyWords) JSONUtils.toBean(respContent, KeyWords.class);
-							System.out.println("======================>>keyWord: " + keyWord);
+							KeyWords keyWord = JSONUtils.toBean(respContent, KeyWords.class);
+							logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+							logger.info("======================>>keyWord: " + keyWord);
+							logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 							Image image = new Image();
 							image.setMediaId(keyWord.getValuess());
 							return MessageResponse.getImageMessage(toUserName, fromUserName, image);
@@ -117,6 +124,9 @@ public class MessageServiceUtils {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+		logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+		logger.info("======================>>MessageResponse.getTextMessage(fromUserName , toUserName , respContent): " + MessageResponse.getTextMessage(fromUserName , toUserName , respContent));
+		logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 		return MessageResponse.getTextMessage(fromUserName , toUserName , respContent);
 	}
 	

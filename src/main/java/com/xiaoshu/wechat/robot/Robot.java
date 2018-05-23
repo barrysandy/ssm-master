@@ -1,11 +1,12 @@
 package com.xiaoshu.wechat.robot;
 
 import com.xiaoshu.api.Api;
-import com.xiaoshu.api.Set;
 import com.xiaoshu.tools.ToolsASCIIChang;
 import com.xiaoshu.tools.ToolsHttpRequest;
 import com.xiaoshu.tools.ToolsString;
 import com.xiaoshu.tools.ToolsInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -13,6 +14,7 @@ import com.xiaoshu.tools.ToolsInterface;
  * @author XGB
  */
 public class Robot {
+	private static Logger logger = LoggerFactory.getLogger(Robot.class);
 	/**
 	 * 用户输入的内容匹配数据库关键字
 	 * @param content 输入的内容
@@ -21,6 +23,10 @@ public class Robot {
 	public static String RobotAnser(String menuId,String content){
 		content = ToolsASCIIChang.stringToAscii(content);
 		String jsonstr = ToolsHttpRequest.sendGet(Api.GET_KEYWORRDS_BYMID_AND_KEY, "menuId="+menuId+"&keyes="+content);
+		logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+		logger.info("Robot.RobotAnser jsonstr is:" + jsonstr);
+		System.out.println("Robot.RobotAnser jsonstr is:" + jsonstr);
+		logger.info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 		return ToolsString.getStrRemoveBracket(jsonstr);
 	}
 	

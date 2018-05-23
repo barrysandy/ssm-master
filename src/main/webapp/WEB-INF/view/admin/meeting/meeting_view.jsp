@@ -4,6 +4,9 @@
 <head>
     <title>查看详细</title>
     <%@ include file="/WEB-INF/common_andy.jsp" %>
+
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.6&key=barrysandy"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
     <script>
         function cancel() {
 //            window.parent.location.reload();
@@ -15,6 +18,7 @@
 <body>
 <div class="g-layout">
     <div class="layout-center">
+        <input type="hidden" id="mapPoint" name="mapPoint" value="${bean.mapPoint}"/>
         <div class="g-max f-p-xs f-p-t-n" id="PrintContentDiv">
             <table class="m-table-forms inline">
                 <tr>
@@ -55,6 +59,44 @@
                         <c:if test="${bean.status == 1}"><span style="color: green;">已启用</span></c:if>
                     </td>
                 </tr>
+                <tr>
+                    <td class="table-header">地图显示初始点位<span style="color: red">*</span></td>
+                    <td colspan="7">地图标点：
+                        <div id="container" style="width: 50%;height: 200px;"></div>
+                    </td>
+                </tr>
+                <script type="text/javascript">
+                    var mapPoint = "[" + $("#mapPoint").val() + "]";
+                    var positionCenter = eval(mapPoint);
+                    //初始化地图对象，加载地图
+                    map = new AMap.Map("container", {
+                        resizeEnable: true,
+                        center: positionCenter,//地图中心点
+                        zoom: 13 //地图显示的缩放级别
+                    });
+                    markers = [];
+
+                    addMarker(positionCenter,"0");
+
+                    /**
+                     * 移添加 Marker
+                     */
+                    function addMarker(position,type) {
+
+                        if(type == "1"){
+                            $(".amap-icon").remove();
+                        }
+                        new AMap.Marker({
+                            map: map,
+                            position: position,
+                            icon: new AMap.Icon({
+                                size: new AMap.Size(40, 50),  //图标大小
+                                image: "http://webapi.amap.com/theme/v1.3/images/newpc/way_btn2.png",
+                                imageOffset: new AMap.Pixel(0, -60)
+                            })
+                        });
+                    }
+                </script>
                 <tr>
                     <td class="table-header">会议描述</td>
                     <td colspan="7">&nbsp;${bean.descM}</td>

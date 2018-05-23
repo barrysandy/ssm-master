@@ -36,6 +36,7 @@ public class MessageRecord implements Serializable {
 	@Column(name="MOBILE")
 	private String mobile;//目标电话号码 (MOBILE)
 
+
 	@Column(name="SIGN")
 	private String sign;//消息签名 (SIGN)
 
@@ -63,9 +64,9 @@ public class MessageRecord implements Serializable {
 	@Column(name="STATUS")
 	private int status;//消息状态 -1删除 0存在(STATUS)
 
-	public static long getSerialVersionUID() {
-		return serialVersionUID;
-	}
+	@Column(name="TARGET_NAME")
+	private String targetName;//目标人姓名 (TARGET_NAME)
+
 
 	public String getId() {
 		return id;
@@ -155,9 +156,17 @@ public class MessageRecord implements Serializable {
 		this.status = status;
 	}
 
+	public String getTargetName() {
+		return targetName;
+	}
+
+	public void setTargetName(String targetName) {
+		this.targetName = targetName;
+	}
+
 	public MessageRecord() { }
 
-	public MessageRecord(String id, String mobile, String sign, String content, String userId, String responseStatus, Date createTime, Date updateTime, String descM, String code, int status) {
+	public MessageRecord(String id, String mobile, String sign, String content, String userId, String responseStatus, Date createTime, Date updateTime, String descM, String code, int status, String targetName) {
 		this.id = id;
 		this.mobile = mobile;
 		this.sign = sign;
@@ -169,6 +178,7 @@ public class MessageRecord implements Serializable {
 		this.descM = descM;
 		this.code = code;
 		this.status = status;
+		this.targetName = targetName;
 	}
 
 	@Override
@@ -185,6 +195,7 @@ public class MessageRecord implements Serializable {
 				", descM='" + descM + '\'' +
 				", code='" + code + '\'' +
 				", status=" + status +
+				", targetName='" + targetName + '\'' +
 				'}';
 	}
 }
