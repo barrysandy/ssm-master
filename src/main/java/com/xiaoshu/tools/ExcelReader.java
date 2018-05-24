@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import com.xiaoshu.entity.MeetingSign;
 import com.xiaoshu.po.DtoMeetingSign;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -144,12 +146,48 @@ public class ExcelReader {
             if (row != null) {
                 for (int j = 0; j < row.getLastCellNum(); j++) {
                     Cell cell = row.getCell(j);
-                    if (i == 0) {
-                        columnHeaderList.add(getCellValue(cell));
-                    } else {
-                        map.put(columnHeaderList.get(j), this.getCellValue(cell));
+                    String cellValue = "";
+                    if (null != cell) {
+                        // 以下是判断数据的类型
+                        switch (cell.getCellType()) {
+                            case HSSFCell.CELL_TYPE_NUMERIC: // 数字
+                                DecimalFormat df = new DecimalFormat("0");
+                                cellValue = df.format(cell.getNumericCellValue());
+                                break;
+
+                            case HSSFCell.CELL_TYPE_STRING: // 字符串
+                                cellValue = cell.getStringCellValue();
+                                break;
+
+                            case HSSFCell.CELL_TYPE_BOOLEAN: // Boolean
+                                cellValue = cell.getBooleanCellValue() + "";
+                                break;
+
+                            case HSSFCell.CELL_TYPE_FORMULA: // 公式
+                                cellValue = cell.getCellFormula() + "";
+                                break;
+
+                            case HSSFCell.CELL_TYPE_BLANK: // 空值
+                                cellValue = "";
+                                break;
+
+                            case HSSFCell.CELL_TYPE_ERROR: // 故障
+                                cellValue = "非法字符";
+                                break;
+
+                            default:
+                                cellValue = "未知类型";
+                                break;
+                        }
                     }
-                    list.add(this.getCellValue(cell));
+                    list.add(cellValue);
+
+//                    if (i == 0) {
+//                        columnHeaderList.add(getCellValue(cell));
+//                    } else {
+//                        map.put(columnHeaderList.get(j), this.getCellValue(cell));
+//                    }
+//                    list.add(this.getCellValue(cell));
                 }
             }
             if (i > 0) {

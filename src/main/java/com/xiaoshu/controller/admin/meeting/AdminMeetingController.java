@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Controller
@@ -345,6 +346,7 @@ public class AdminMeetingController {
                 }
             }
 
+
             //TODO 解析文档并添加新参会人员
             if(filePath != null){
                 if(!"".equals(filePath)){
@@ -356,16 +358,22 @@ public class AdminMeetingController {
                         for (int i = 0;i < list.size();i++){
                             Object listObject = list.get(i);
                             DtoMeetingSign dtoMmeetingSign = (DtoMeetingSign)listObject;
+                            System.out.println("dtoMmeetingSign: " + dtoMmeetingSign);
+
                             if(dtoMmeetingSign.get姓名() != null && dtoMmeetingSign.get电话()!= null){
                                 MeetingSign meetingSign = new MeetingSign();
                                 meetingSign.setId(UUID.randomUUID().toString());//ID
-                                meetingSign.setName(dtoMmeetingSign.get姓名().trim());//name
+                                meetingSign.setName(dtoMmeetingSign.get姓名());//name
                                 meetingSign.setCompany(dtoMmeetingSign.get公司());//company
                                 meetingSign.setPersonType(dtoMmeetingSign.get类别());//personType
                                 meetingSign.setPosition(dtoMmeetingSign.get职位());//position
                                 meetingSign.setSex(dtoMmeetingSign.get性别());//sex
-                                String phone = dtoMmeetingSign.get电话().trim();//电话号码处理
-                                phone = phone.replaceAll("\\.","").replaceAll("E10","");
+                                String phone = dtoMmeetingSign.get电话();//电话号码处理
+//                                System.out.println("phone1: " + phone);
+//                                phone = phone.replaceAll("\\.","");
+//                                System.out.println("phone2: " + phone);
+//                                phone = phone.replaceAll("E10","");
+//                                System.out.println("phone3: " + phone);
                                 meetingSign.setPhone(phone);//phone
                                 meetingSign.setCreateTime(nowTime);//nowTime
                                 if(dtoMmeetingSign.get晚宴() != null){//joinDonner
@@ -411,6 +419,7 @@ public class AdminMeetingController {
         }
         return String.valueOf(total);
     }
+
 
     /**
      * meeting/downloadExcel

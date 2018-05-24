@@ -770,6 +770,7 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 	 */
 	@Override
 	public Integer sendMeetingMsg(String id,String type) throws Exception {
+		int totalall = 0;
 		Integer sendTotal = 0 ;
 		//TODO 【11 会议短信】会议提醒
 		String nowTime = ToolsDate.getStringDate(ToolsDate.simpleSecond);//当前时间
@@ -790,6 +791,9 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 								Iterator<MeetingSign> iterator = list.iterator();
 								while (iterator.hasNext()) {
 									MeetingSign meetingSign = iterator.next();
+//									System.out.println("**************************************");
+//									System.out.println("current totalall=" + totalall + " i=" + i + " meetingSign" + meetingSign );
+									totalall ++;
 									String code = meetingSign.getId() + meetingSign.getPhone() + type;
 									int exit = messageRecordMapper.countByCode(code);
 									if(exit <= 0) {
@@ -799,27 +803,29 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 										String signName = meetingSign.getName();
 										String signPhone = meetingSign.getPhone();
 										//电话号码验证
-										if(ToolsPhone.isMobileNO(signPhone)){
-											String sign = messageTemple.getSign();
-											String meetingTitle = meeting.getTitle();
-											String meetingCode = com.xiaoshu.api.Set.SYSTEM_URL + MeetingController.MEETING_URL2 + id + "&code=" + meetingSign.getSignCode();
-											// meetingCode = URLEncoder.encode(meetingCode ,"utf-8");
-											String meetingUserName = meeting.getName();
-											String meetingUserPhone = meeting.getPhone();
-											String meetingTime = meeting.getBeginTime() + " - " + meeting.getEndTime() ;
-											String address = meeting.getAddress();
+										if(signPhone != null){
+											if(!"".equals(signPhone) && signPhone.length() == 11){
+												String sign = messageTemple.getSign();
+												String meetingTitle = meeting.getTitle();
+												String meetingCode = com.xiaoshu.api.Set.SYSTEM_URL + MeetingController.MEETING_URL2 + id + "&code=" + meetingSign.getSignCode();
+												// meetingCode = URLEncoder.encode(meetingCode ,"utf-8");
+												String meetingUserName = meeting.getName();
+												String meetingUserPhone = meeting.getPhone();
+												String meetingTime = meeting.getBeginTime() + " - " + meeting.getEndTime() ;
+												String address = meeting.getAddress();
 
-											//"尊敬的+您好，+将于+召开，您的数字签到码是+，点击显示入场签到条形码+，签到工作将于+准时开始，+。期待您的光临！【+】";
-											String[] param = new String[]{signName,meetingTitle,"明天即2018年5月25日在温江皇冠假日酒店",meetingSign.getSignCode(),meetingCode,"5月25日早上9：00","到达现场后请从酒店大堂移步2楼宴会厅长廊签到并领取入场徽章",sign};
-											HashMap<String, Object> map = IndustrySMS.link(signPhone, content, "",param);
-											String status = (String) map.get("status");
-											String msg =  (String) map.get("msg");
-											String msgId = UUID.randomUUID().toString();
-											MessageRecord messageRecord = new MessageRecord(msgId, signPhone, sign, content,meetingSign.getId(), status, new Date(), new Date(), msg ,code, 1,signName);
-											messageRecordMapper.save(messageRecord);
-											sendTotal ++;
-											log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] send Code: " + code + " ------------");
-										}else {
+												//"尊敬的+您好，+将于+召开，您的数字签到码是+，点击显示入场签到条形码+，签到工作将于+准时开始，+。期待您的光临！【+】";
+												String[] param = new String[]{signName,meetingTitle,"明天即2018年5月25日在温江皇冠假日酒店",meetingSign.getSignCode(),meetingCode,"5月25日早上9：00","到达现场后请从酒店大堂移步2楼宴会厅长廊签到并领取入场徽章",sign};
+												HashMap<String, Object> map = IndustrySMS.link(signPhone, content, "",param);
+												String status = (String) map.get("status");
+												String msg =  (String) map.get("msg");
+												String msgId = UUID.randomUUID().toString();
+												MessageRecord messageRecord = new MessageRecord(msgId, signPhone, sign, content,meetingSign.getId(), status, new Date(), new Date(), msg ,code, 1,signName);
+												messageRecordMapper.save(messageRecord);
+												sendTotal ++;
+												log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] send Code: " + code + " ------------");
+											}
+										} else {
 											log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] Your Phone not Mobile: " + code + " ------------");
 										}
 									}else {
