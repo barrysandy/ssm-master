@@ -369,6 +369,9 @@
                                                 <c:if test="${bean.templeType == 'MEETING_MSG_ALL' }">
                                                     <span style="color: tomato;">【会议短信】会议提醒</span>
                                                 </c:if>
+                                                <c:if test="${bean.templeType == 'MEETING_MSG_ALL_THANKS' }">
+                                                    <span style="color: tomato;">【会议感谢短信】会议感谢参与</span>
+                                                </c:if>
                                             </td>
                                             <td align="center">${bean.descM}</td>
                                             <td align="center">${bean.createTime}</td>

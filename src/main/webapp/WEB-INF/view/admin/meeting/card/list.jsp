@@ -141,6 +141,12 @@
             });
         }
 
+        function listExcelAll() {
+            var search = "${search}";
+            window.location.href="${path}/meetingCard/listExcelAll?search="+search;
+        }
+
+
         /**
          *提交表单
          */
@@ -168,6 +174,11 @@
                                 <div class=" panel-head-btnbar">
                                     <a class="u-btn sm success" type="button" href="${path}/meetingCard/list">
                                         <i class="iconfont">&#xe60b;</i> 刷新重载
+                                    </a>
+                                </div>
+                                <div class=" panel-head-btnbar">
+                                    <a class="u-btn sm success" type="button" onClick="listExcelAll()" title="导出名单到excel">
+                                        <i class="iconfont">&#xe606;</i> 导出全部
                                     </a>
                                 </div>
                                 <div class="panel-head-btnbar f-right">

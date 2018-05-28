@@ -196,6 +196,11 @@ public class MessageTempleController {
                 MessageTemple beans = new MessageTemple(UUID.randomUUID().toString(),0, refId,refType,  "【会议短信】会议提醒",
                         11, "MEETING_MSG_ALL", nowTime, null, "一键创建", 1, sign);
                 messageTempleService.save(beans);
+
+                String type = refType + "Thanks";
+                MessageTemple bean2 = new MessageTemple(UUID.randomUUID().toString(),0, refId,type,  "【会议感谢短信】会议感谢参与",
+                        12, "MEETING_MSG_ALL_THANKS", nowTime, null, "一键创建", 1, sign);
+                messageTempleService.save(bean2);
             }
         }catch(Exception e) {
             return JsonUtils.turnJson(false,"error"+e.getMessage(),e);

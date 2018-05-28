@@ -845,4 +845,79 @@ public class MessageRecordServiceImpl implements MessageRecordService{
 	}
 
 
+	/**
+	 * ID 12 :
+	 * 发送会议感谢短信
+	 * @param id 会议id
+	 * @param type 短信类型 MEETING_MSG_ALL_THANKS
+	 * @throws Exception
+	 */
+	@Override
+	public Integer sendMeetingThanksMsg(String id,String type) throws Exception {
+		int totalall = 0;
+		Integer sendTotal = 0 ;
+		//TODO 【12 会议感谢短信】会议感谢参与
+		String nowTime = ToolsDate.getStringDate(ToolsDate.simpleSecond);//当前时间
+		try{
+			if(id != null) {
+				Meeting meeting = meetingMapper.getById(id);
+				if(meeting != null) {
+					List<MessageTemple> listTemple = messageTempleMapper.getListByRefIdAndRefType(meeting.getId(),"meetingThanks");
+					MessageTemple messageTemple = MsgTemplate.getMessageTemple( listTemple,type);
+					if(messageTemple != null){
+						int total = meetingSignMapper.getCountByKeyWord(id,-1,"");
+						int pageSize = 10;
+						int totalPage = ToolsPage.totalPage(total, pageSize);//总页数
+						if(totalPage > 0) {
+							for (int i = 0; i < totalPage; i++) {
+								int index = i * pageSize;
+								List<MeetingSign> list = meetingSignMapper.getListByKeyWord(id ,-1 ,index, pageSize,"");
+								Iterator<MeetingSign> iterator = list.iterator();
+								while (iterator.hasNext()) {
+									MeetingSign meetingSign = iterator.next();
+									totalall ++;
+									String code = meetingSign.getId() + meetingSign.getPhone() + type;
+									int exit = messageRecordMapper.countByCode(code);
+									if(exit <= 0) {
+										log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] messageTemple : " + messageTemple + " ------------");
+										String content = MsgTemplate.getMsgTemplate(messageTemple.getTempleId());
+										//TODO 短信参数组装
+										String signName = meetingSign.getName();
+										String signPhone = meetingSign.getPhone();
+										//电话号码验证
+										if(signPhone != null){
+											if(!"".equals(signPhone) && signPhone.length() == 11){
+												String sign = messageTemple.getSign();
+												String meetingTitle = meeting.getTitle();
+												System.out.println("-------------->>signName: " + signName + " meetingTitle:" + meetingTitle + " sign:" + sign);
+												//"尊敬的+您好，感谢您参加+，希望我们用心的准备能为你带来实质的收获。西行起点旅游目的地景区联盟筹备已经正式启动，如您对合作感兴趣，欢迎联系13982229494罗艺艳小姐（微信同号）。即刻出发，雄心万丈。 西行起点旅游博览会组委会【+】";
+												String[] param = new String[]{signName,meetingTitle,sign};
+												HashMap<String, Object> map = IndustrySMS.link(signPhone, content, "",param);
+												String status = (String) map.get("status");
+												String msg =  (String) map.get("msg");
+												String msgId = UUID.randomUUID().toString();
+												MessageRecord messageRecord = new MessageRecord(msgId, signPhone, sign, content,meetingSign.getId(), status, new Date(), new Date(), msg ,code, 1,signName);
+												messageRecordMapper.save(messageRecord);
+												sendTotal ++;
+												log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] send Code: " + code + " ------------");
+											}
+										} else {
+											log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] Your Phone not Mobile: " + code + " ------------");
+										}
+									}else {
+										log.info("------------ [LOG["+ nowTime +"]sendMeetingMsg] HasSend Code: " + code + " ------------");
+									}
+								}
+							}
+						}
+					}
+
+				}
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return sendTotal;
+	}
+
 }

@@ -185,13 +185,66 @@
                 layuiUtilMsg("发送短信:" + result + "条");
             });
         }
-        
+
+
+        function sendMeetingThanksMessage(id) {
+            layer.open({
+                type: 1,
+                title: '开始群发感谢短信嘛',
+                skin: 'layui-layer-rim',
+                area: ['400px', '200px'],
+                content: '<div style="padding: 42px 112px; font-size: 16px; color: #808080;" >确认发送?</div>',
+                btn: ['确认','取消'],
+                yes: function(){
+                    layer.closeAll();
+                    sendMeetingThanksMessageYes(id);
+                },
+                btn2: function(){
+                    console.log('no');
+                }
+            });
+        }
+
+        function sendMeetingThanksMessageYes(id) {
+            var url = "${path}/meeting/sendMeetingThanksMessage";
+            $.get(url,{'id':id},function(result){
+                layuiUtilMsg("发送短信:" + result + "条");
+            });
+        }
+
         /**
          *提交表单
          */
         function sumitForm() {
             $("#listForm").submit();
         }
+
+        function doExcle(id) {
+            layer.open({
+                type: 1,
+                title: '操作提示',
+                skin: 'layui-layer-rim',
+                area: ['450px', '220px'],
+                content: '<div style="padding: 42px 112px; font-size: 16px; color: #808080;" >导出该会议的Excel到本地吗？</div>',
+                btn: ['确认','取消'],
+                yes: function(){
+                    layer.closeAll();
+                    doExcleYes(id);
+                },
+                btn2: function(){
+                    console.log('no');
+                }
+            });
+
+        }
+
+
+        function doExcleYes(id) {
+            window.location.href="${path}/meeting/listExcelAll?id="+id;
+        }
+
+
+
     </script>
 </head>
 <body>
@@ -268,6 +321,10 @@
                                                         href="${path}/meeting/signIndex?id=${bean.id}" target="_blank">
                                                     <i class="iconfont" style="color: green">&#xe62f;</i>
                                                 </a>
+                                                <button class="u-btn sm texture f-m-l-xs" title="导出参会人员到Excel" type="button"
+                                                        onClick="doExcle('${bean.id}')">
+                                                    <i class="iconfont" style="gray: deeppink">&#xe6ca;</i>
+                                                </button>
                                                 <button class="u-btn sm texture f-m-l-xs" title="设置导航地图坐标" type="button"
                                                         onClick="viewCoordinate('${bean.id}')">
                                                     <i class="iconfont" style="color: magenta">&#xe62e;</i>
@@ -280,6 +337,9 @@
                                                     <i class="iconfont">&#xe6ee;</i>
                                                 </button>
                                                 <button class="u-btn sm texture f-m-l-xs" title="向所有参会人员发送提醒信息" type="button" onClick="sendMeetingMessage('${bean.id}')" style="color: red;">
+                                                    <i class="iconfont">&#xe6ee;</i>
+                                                </button>
+                                                <button class="u-btn sm texture f-m-l-xs" title="向所有参会人员发送感谢信息" type="button" onClick="sendMeetingThanksMessage('${bean.id}')" style="color: blueviolet;">
                                                     <i class="iconfont">&#xe6ee;</i>
                                                 </button>
                                                 <button class="u-btn sm texture f-m-l-xs" title="查看" type="button"

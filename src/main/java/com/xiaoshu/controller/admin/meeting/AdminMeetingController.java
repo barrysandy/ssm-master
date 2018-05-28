@@ -198,7 +198,10 @@ public class AdminMeetingController {
     @ResponseBody
     public String del(String id){
         try{
-            meetingService.deleteById(id);
+            int flag = meetingService.deleteById(id);
+            if(flag > 0){
+                meetingSignService.deleteByMeetingId(id);
+            }
         }catch(Exception e){
             return JsonUtils.turnJson(false,"error"+e.getMessage(),e);
         }
@@ -223,100 +226,6 @@ public class AdminMeetingController {
         }
         return String.valueOf(i);
     }
-
-
-    /**
-     * meeting/readerExcelAndAddData
-     * 执行解析Excel文件
-     * @param id 主键ID
-     * @param x 文档的标题数
-     * @param y 文档的数量条数（包含标题行）
-     * @param type 添加数据模式 0删除以前的 1追加模式
-     * @author XGB
-     * @date 2018-5-11 10:05
-     */
-//    @RequestMapping("/readerExcelAndAddData")
-//    @ResponseBody
-//    public String readerExcelAndAddData(String id,String tableName,Integer x,Integer y,Integer type){
-//        int total = 0;
-//        try{
-//            //TODO 初始化参数
-//            if(x == null || x == 0){x = 7;}//设置默认解析标题数
-//            if(y == null || y == 0){y = 10;}//设置默认解析记录条数（包含标题行）
-//            if(tableName == null || "".equals(tableName)){tableName = "Sheet1";}//设置默认解析表名称
-//            String filePath = null;//文件地址
-//            if(y == null || y == 0){y = 10;}
-//            int maxX = x;
-//            if(type == 0){
-//                //删除以前的数据
-//                meetingSignService.deleteByMeetingId(id);
-//            }
-//
-//            if(Set.SYSTEM_ENVIRONMENTAL == 0){//测试环境
-//                filePath = "G:\\test.xlsx";
-//            }else if(Set.SYSTEM_ENVIRONMENTAL == 1){//正式环境
-//                //TODO 换取文件地址
-//                Meeting meeting = meetingService.getById(id);
-//                if(meeting.getExcelPath() != null){
-//                    filePath = ToolsImage.getFilePathByServer(meeting.getExcelPath());
-//                }
-//            }
-//
-//            //TODO 解析文档并添加新参会人员
-//            if(filePath != null){
-//                if(!"".equals(filePath)){
-//                    String nowTime = ToolsDate.getStringDate(ToolsDate.simpleSecond);
-//                    //TODO 获取导入数据的集合
-//                    List<MeetingSign> listMeetingSign = new ArrayList<MeetingSign>();
-//                    List<Object> list = ExcelReader.getListExcelObject(MeetingSign.class,filePath,tableName,x,y,maxX);
-//                    if(list != null){
-//                        for (int i = 0;i < list.size();i++){
-//                            Object listObject = list.get(i);
-//                            MeetingSign meetingSign = (MeetingSign)listObject;
-//                            if(meetingSign.getName() != null && meetingSign.getPhone()!= null){
-//                                //电话号码处理
-//                                String phone = meetingSign.getPhone().trim();
-//                                phone = phone.replaceAll("\\.","");
-//                                phone = phone.replaceAll("E10","");
-//
-//                                meetingSign.setId(UUID.randomUUID().toString());
-//                                meetingSign.setName(meetingSign.getName().trim());
-//                                meetingSign.setPhone(phone);
-//                                meetingSign.setCreateTime(nowTime);
-//                                meetingSign.setJoinDinner(0);
-//                                meetingSign.setMeetingId(id);
-//                                meetingSign.setSignCode(meetingSignService.getSignCode());
-//                                meetingSign.setStatus(0);
-//                                listMeetingSign.add(meetingSign);
-//                            }
-//                        }
-//                    }
-//
-//                    if(listMeetingSign != null){
-//                        if(listMeetingSign.size() > 0){
-//                            Iterator<MeetingSign> iterator = listMeetingSign.iterator();
-//                            while (iterator.hasNext()){
-//                                MeetingSign bean = iterator.next();
-//                                if(bean != null){
-//                                    int r = meetingSignService.save(bean);
-//                                    if(r != -1){
-//                                        total = total + r ;
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                    //meetingSignService.saveList(listMeetingSign);
-//                    //total = listMeetingSign.size();
-//                }
-//            }
-//
-//        }catch(Exception e){
-//            e.printStackTrace();
-//            return String.valueOf(0);
-//        }
-//        return String.valueOf(total);
-//    }
 
 
     @RequestMapping("/readerExcelAndAddData")
@@ -345,8 +254,6 @@ public class AdminMeetingController {
                     filePath = ToolsImage.getFilePathByServer(meeting.getExcelPath());
                 }
             }
-
-
             //TODO 解析文档并添加新参会人员
             if(filePath != null){
                 if(!"".equals(filePath)){
@@ -369,11 +276,6 @@ public class AdminMeetingController {
                                 meetingSign.setPosition(dtoMmeetingSign.get职位());//position
                                 meetingSign.setSex(dtoMmeetingSign.get性别());//sex
                                 String phone = dtoMmeetingSign.get电话();//电话号码处理
-//                                System.out.println("phone1: " + phone);
-//                                phone = phone.replaceAll("\\.","");
-//                                System.out.println("phone2: " + phone);
-//                                phone = phone.replaceAll("E10","");
-//                                System.out.println("phone3: " + phone);
                                 meetingSign.setPhone(phone);//phone
                                 meetingSign.setCreateTime(nowTime);//nowTime
                                 if(dtoMmeetingSign.get晚宴() != null){//joinDonner
@@ -474,6 +376,26 @@ public class AdminMeetingController {
             String message = DtoMessage.transformationToJson(dtoMessage);
             deadLetterPublishService.send(EnumsMQName.DEAD_TEN_SECONDS,message);
 
+        }catch(Exception e) {
+            e.printStackTrace();
+            return "-1";
+        }
+        return String.valueOf(total);
+    }
+
+
+    /**
+     * 发送群发感谢短信
+     * @author XGB
+     * @date 2018-05-28 10:00
+     */
+    @RequestMapping("/sendMeetingThanksMessage")
+    @ResponseBody
+    public String sendMeetingThanksMessage(String id){
+        int total = 0;
+        try{
+            //发送短信
+            total = messageRecordService.sendMeetingThanksMsg(id,"MEETING_MSG_ALL_THANKS");
         }catch(Exception e) {
             e.printStackTrace();
             return "-1";

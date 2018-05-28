@@ -56,7 +56,7 @@
 			AND REF_ID = #{refId}
 		</if>
 		<if test="refType != null and refType != ''">
-			AND REF_TYPE = #{refType}
+			AND REF_TYPE LIKE concat(concat('%',#{refType}),'%')
 		</if>
 		<if test="key != null and key != ''">
 			AND TEMPLE_NAME LIKE concat(concat('%',#{key}),'%')
@@ -72,7 +72,7 @@
 			AND REF_ID = #{refId}
 		</if>
 		<if test="refType != null and refType != ''">
-			AND REF_TYPE = #{refType}
+			AND REF_TYPE LIKE concat(concat('%',#{refType}),'%')
 		</if>
 		<if test="key != null and key != ''">
 			AND TEMPLE_NAME LIKE concat(concat('%',#{key}),'%')

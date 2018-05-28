@@ -148,4 +148,13 @@ public  interface MessageRecordService {
 	 * @throws Exception
 	 */
 	Integer sendMeetingMsg(String id,String type) throws Exception;
+
+	/**
+	 * ID 12 :
+	 * 发送会议感谢短信
+	 * @param id 会议id
+	 * @param type 短信类型 MEETING_MSG_ALL_THANKS
+	 * @throws Exception
+	 */
+	Integer sendMeetingThanksMsg(String id,String type) throws Exception;
 }

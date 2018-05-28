@@ -103,6 +103,13 @@ public class MsgTemplate {
 
 	public static String MEETING_MSG_ALL = "尊敬的+您好，+将于+召开，您的数字签到码是+，点击显示入场签到条形码+，签到工作将于+准时开始，+。期待您的光临！【+】";
 
+
+
+	/**
+	 * 短信模板ID：12
+	 * MEETING_MSG_ALL_THANKS 发送会议感谢短信
+	 */
+	public static String MEETING_MSG_ALL_THANKS = "尊敬的+您好，感谢您参加+，希望我们用心的准备能为你带来实质的收获。西行起点旅游目的地景区联盟筹备已经正式启动，如您对合作感兴趣，欢迎联系13982229494罗艺艳小姐（微信同号）。即刻出发，雄心万丈。 西行起点旅游博览会组委会【+】";
 	/**
 	 * 获取模板
 	 * @param id
@@ -143,6 +150,8 @@ public class MsgTemplate {
 			template = REFUND_FAIL;
 		}if(id == 11){
 			template = MEETING_MSG_ALL;
+		}if(id == 12){
+			template = MEETING_MSG_ALL_THANKS;
 		}
 		return template;
 	}
@@ -162,6 +171,7 @@ public class MsgTemplate {
 		list.add(getMsgTemplate(9));
 		list.add(getMsgTemplate(10));
 		list.add(getMsgTemplate(11));
+		list.add(getMsgTemplate(12));
 		return list;
 	}
 

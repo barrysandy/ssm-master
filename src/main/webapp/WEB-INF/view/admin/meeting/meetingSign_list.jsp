@@ -313,7 +313,7 @@
                                             <td align="center">${bean.phone}</td>
                                             <td align="center">${bean.signCode}</td>
                                             <td align="center">
-                                                <img style="width: 200px;" src="${pathUrl}/${bean.meetingId}/${bean.signCode}.jpeg" width="80%"  onerror="this.src='${pathUrl}/${bean.meetingId}/${bean.signCode}.jpg'" />
+                                                <img style="height: 60px;width: auto;" src="${pathUrl}/${bean.meetingId}/${bean.signCode}.jpeg" width="80%"  onerror="this.src='${path}/resources/img/usermen.png'" />
                                             </td>
                                             <td align="center">${bean.company}</td>
                                             <td align="center">${bean.personType}</td>

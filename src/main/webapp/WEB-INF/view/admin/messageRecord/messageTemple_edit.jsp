@@ -116,6 +116,7 @@
                                 <option value="REFUND">【统一商品】统一退款模板</option>
                                 <option value="WINNING">【会话活动商品】中奖生成订单提醒</option>
                                 <option value="MEETING_MSG_ALL">【会议短信】会议提醒</option>
+                                <option value="MEETING_MSG_ALL_THANKS">【会议感谢短信】会议感谢参与</option>
                             </select>
                         </td>
                     </tr>

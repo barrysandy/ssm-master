@@ -85,7 +85,7 @@
 
                     <tr id="showImaList">
                         <td class="table-header"><span >电话</span><span style="color: red">*</span></td>
-                        <td colspan="7"><input type="text" class="u-input" name="phone" value="${bean.phone}" maxlength="11"></td>
+                        <td colspan="7"><input type="text" class="u-input" name="phone" value="${bean.phone}" maxlength="20"></td>
                     </td>
                     </tr>
                     <tr >
