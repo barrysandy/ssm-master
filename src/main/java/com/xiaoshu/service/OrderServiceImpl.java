@@ -10,9 +10,20 @@ import com.xiaoshu.entity.OrderCodes;
 import com.xiaoshu.enumeration.EnumsString;
 import com.xiaoshu.tools.ToolsDate;
 import com.xiaoshu.tools.ToolsString;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+/**
+ * orderService
+ * 缓存机制说明：所有的查询结果都放进了缓存，也就是把MySQL查询的结果放到了redis中去，
+ * 然后第二次发起该条查询时就可以从redis中去读取查询的结果，从而不与MySQL交互，从而达到优化的效果，
+ * redis的查询速度之于MySQL的查询速度相当于 内存读写速度 /硬盘读写速度
+ * @Cacheable("a")注解的意义就是把该方法的查询结果放到redis中去，下一次再发起查询就去redis中去取，存在redis中的数据的key就是a；
+ * @CacheEvict(value={"a","b"},allEntries=true) 的意思就是执行该方法后要清除redis中key名称为a,b的数据；
+ */
 
 @Service("orderService")
 public class OrderServiceImpl implements OrderService{
@@ -21,60 +32,83 @@ public class OrderServiceImpl implements OrderService{
 	@Resource private OrderCodesMapper orderCodesMapper;
 
 	/** save one */
+	@CacheEvict(value={"getById","getByOrderNo","getByGroupIdAndUserId","getListByGroupId",
+			"getIdByOrderNo","getOrderNoById","getTypeStateByOrderNo",
+			"listByKeyAndTypeStateAndStatusAndUserIdAndSellerId","listByUserId"},allEntries=true)
+	//清空缓存，allEntries变量表示所有对象的缓存都清除
 	@Override
 	public int save(Order bean) throws Exception {
 		return mapper.save(bean);
 	}
 
 	/** delete ById */
+	@CacheEvict(value={"getById","getByOrderNo","getByGroupIdAndUserId","getListByGroupId",
+			"getIdByOrderNo","getOrderNoById","getTypeStateByOrderNo",
+			"listByKeyAndTypeStateAndStatusAndUserIdAndSellerId","listByUserId"},allEntries=true)
 	@Override
 	public Integer deleteById( Integer id) throws Exception {
 		return mapper.deleteById(id);
 	}
 
 	/** 更新订单信息 */
+	@CacheEvict(value={"getById","getByOrderNo","getByGroupIdAndUserId","getListByGroupId",
+			"getIdByOrderNo","getOrderNoById","getTypeStateByOrderNo",
+			"listByKeyAndTypeStateAndStatusAndUserIdAndSellerId","listByUserId"},allEntries=true)
 	@Override
 	public Integer updateAll(Order bean) throws Exception {
 		return mapper.updateAll(bean);
 	}
 
 	/** 更新订单状态 */
+	@CacheEvict(value={"getById","getByOrderNo","getByGroupIdAndUserId","getListByGroupId",
+			"getIdByOrderNo","getOrderNoById","getTypeStateByOrderNo",
+			"listByKeyAndTypeStateAndStatusAndUserIdAndSellerId","listByUserId"},allEntries=true)
 	@Override
 	public Integer updateOldTypeStateToOrderStateByOrderNo( String orderNo, Integer typeState, Integer oldTypeState,String descM) throws Exception {
 		return mapper.updateOldTypeStateToOrderStateByOrderNo(orderNo, typeState, oldTypeState, descM);
 	}
 
 	/** 更新订单状态额外状态 */
+	@CacheEvict(value={"getById","getByOrderNo","getByGroupIdAndUserId","getListByGroupId",
+			"getIdByOrderNo","getOrderNoById","getTypeStateByOrderNo",
+			"listByKeyAndTypeStateAndStatusAndUserIdAndSellerId","listByUserId"},allEntries=true)
 	@Override
 	public Integer updateOldStateToOrderStateByOrderNo( String orderNo, Integer state, Integer oldState) throws Exception {
 		return mapper.updateOldStateToOrderStateByOrderNo(orderNo, state, oldState);
 	}
 
 	/** 更新订单 groupId */
+	@CacheEvict(value={"getById","getByOrderNo","getByGroupIdAndUserId","getListByGroupId",
+			"getIdByOrderNo","getOrderNoById","getTypeStateByOrderNo",
+			"listByKeyAndTypeStateAndStatusAndUserIdAndSellerId","listByUserId"},allEntries=true)
 	@Override
 	public Integer updateGroupIdByOrderNo( String orderNo, String groupId ) throws Exception {
 		return mapper.updateGroupIdByOrderNo(orderNo, groupId);
 	}
 
 	/** 按照 id 查询订单 */
+	@Cacheable("getById")
 	@Override
 	public Order getById( Integer id) throws Exception {
 		return mapper.getById(id);
 	}
 
 	/** 按照 orderNo 查询订单 */
+	@Cacheable("getByOrderNo")
 	@Override
 	public Order getByOrderNo( String orderNo ) throws Exception {
 		return mapper.getByOrderNo(orderNo);
 	}
 
 	/** 按照 GROUP_ID  USER_ID  查询订单 */
+	@Cacheable("getByGroupIdAndUserId")
 	@Override
 	public Order getByGroupIdAndUserId(String groupId , String userId) throws Exception {
 		return mapper.getByGroupIdAndUserId(groupId ,userId);
 	}
 
 	/** 按照 GROUP_ID  查询订单集合 */
+	@Cacheable("getListByGroupId")
 	@Override
 	public List<Order> getListByGroupId(String groupId ) throws Exception {
 		return mapper.getListByGroupId(groupId);
@@ -82,18 +116,21 @@ public class OrderServiceImpl implements OrderService{
 
 
 	/** 按照 id 查询 orderNo */
+	@Cacheable("getIdByOrderNo")
 	@Override
 	public Integer getIdByOrderNo( String orderNo) throws Exception {
 		return mapper.getIdByOrderNo(orderNo);
 	}
 
 	/** 按照 orderNo 查询 id  */
+	@Cacheable("getOrderNoById")
 	@Override
 	public String getOrderNoById( Integer id) throws Exception {
 		return mapper.getOrderNoById(id);
 	}
 
 	/** 按照 orderNo 查询订单状态（typeState 订单状态 0未付款 1已付款 2已消费  -1查询所有状态） */
+	@Cacheable("getTypeStateByOrderNo")
 	@Override
 	public Integer getTypeStateByOrderNo( String orderNo ) throws Exception {
 		return mapper.getTypeStateByOrderNo(orderNo);
@@ -134,6 +171,7 @@ public class OrderServiceImpl implements OrderService{
 	 * @return 返回订单集合
 	 * @throws Exception 抛出异常
 	 */
+	@Cacheable("listByKeyAndTypeStateAndStatusAndUserIdAndSellerId")
 	@Override
 	public List<Order> listByKeyAndTypeStateAndStatusAndUserIdAndSellerId(String date1 ,String date2, Integer index, Integer pageSize, String key,Integer typeState, Integer status, Integer userId, Integer sellerId,Integer commodityId) throws Exception {
 		return mapper.listByKeyAndTypeStateAndStatusAndUserIdAndSellerId( date1 , date2, index, pageSize, key, typeState, status, userId, sellerId,commodityId);
@@ -161,6 +199,7 @@ public class OrderServiceImpl implements OrderService{
 	 * @return 返回订单集合
 	 * @throws Exception 抛出异常
 	 */
+	@Cacheable("listByUserId")
 	@Override
 	public List<Order> listByUserId(Integer index,Integer pageSize,String userId,String userId2,Integer typeState) throws Exception {
 		return mapper.listByUserId( index, pageSize, userId,userId2, typeState);
